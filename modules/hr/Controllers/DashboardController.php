@@ -28,7 +28,7 @@ class DashboardController
             [$tenantId]
         );
 
-        View::render('hr.views.dashboard.index', [
+        View::render('modules/hr/views.dashboard.index', [
             'totalEmployees' => $totalEmployees,
             'activeLeave' => $activeLeave,
             'pendingReviews' => $pendingReviews,

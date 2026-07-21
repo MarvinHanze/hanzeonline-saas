@@ -40,7 +40,7 @@ class EmployeeController
             [$tenantId]
         );
 
-        View::render('hr.views.employees.index', [
+        View::render('modules/hr/views.employees.index', [
             'employees' => $employees,
             'departments' => $departments,
             'search' => $search,
@@ -54,7 +54,7 @@ class EmployeeController
             "SELECT id, name FROM hr_departments WHERE tenant_id = ? ORDER BY name",
             [(int) Auth::user()['tenant_id']]
         );
-        View::render('hr.views.employees.create', ['departments' => $departments]);
+        View::render('modules/hr/views.employees.create', ['departments' => $departments]);
     }
 
     public function store(): void
@@ -110,7 +110,7 @@ class EmployeeController
             [(int) $id, $tenantId]
         );
 
-        View::render('hr.views.employees.show', [
+        View::render('modules/hr/views.employees.show', [
             'employee' => $employee,
             'leaveHistory' => $leaveHistory,
             'reviews' => $reviews,
@@ -136,7 +136,7 @@ class EmployeeController
             [$tenantId]
         );
 
-        View::render('hr.views.employees.edit', [
+        View::render('modules/hr/views.employees.edit', [
             'employee' => $employee,
             'departments' => $departments,
         ]);

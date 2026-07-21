@@ -23,6 +23,6 @@ class DepartmentController
             [$tenantId]
         );
 
-        View::render('hr.views.departments.index', ['departments' => $departments]);
+        View::render('modules/hr/views.departments.index', ['departments' => $departments]);
     }
 }

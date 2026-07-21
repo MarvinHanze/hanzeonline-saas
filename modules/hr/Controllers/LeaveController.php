@@ -45,7 +45,7 @@ class LeaveController
             [$tenantId]
         );
 
-        View::render('hr.views.leave.index', [
+        View::render('modules/hr/views.leave.index', [
             'requests' => $requests,
             'employees' => $employees,
             'status' => $status,

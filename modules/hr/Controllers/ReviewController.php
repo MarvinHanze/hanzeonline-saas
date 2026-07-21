@@ -23,6 +23,6 @@ class ReviewController
             [$tenantId]
         );
 
-        View::render('hr.views.reviews.index', ['reviews' => $reviews]);
+        View::render('modules/hr/views.reviews.index', ['reviews' => $reviews]);
     }
 }
