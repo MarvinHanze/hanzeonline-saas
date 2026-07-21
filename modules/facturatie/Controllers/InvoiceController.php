@@ -127,7 +127,7 @@ class InvoiceController
             Database::insert('fa_invoice_items', array_merge($item, ['invoice_id' => $invoiceId]));
         }
 
-        header('Location: ' . BASE . '/facturatie/facturen/$invoiceId");
+        header('Location: ' . BASE . '/facturatie/facturen/' . $invoiceId);
         exit;
     }
 

@@ -122,7 +122,7 @@ class CustomerController
             'notes' => trim($_POST['notes'] ?? ''),
         ], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
 
-        header('Location: ' . BASE . '/facturatie/klanten/$id");
+        header('Location: ' . BASE . '/facturatie/klanten/' . $id);
         exit;
     }
 

@@ -159,7 +159,7 @@ class EmployeeController
             'leave_balance_days' => (int) ($_POST['leave_balance_days'] ?? 25),
         ], 'id = ? AND tenant_id = ?', [(int) $id, $tenantId]);
 
-        header('Location: ' . BASE . '/hr/medewerkers/$id");
+        header('Location: ' . BASE . '/hr/medewerkers/' . $id);
         exit;
     }
 }

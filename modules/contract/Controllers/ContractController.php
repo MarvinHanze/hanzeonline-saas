@@ -104,7 +104,7 @@ class ContractController
             'signature_data' => $content,
         ]);
 
-        header('Location: ' . BASE . '/contract/contracts/$contractId");
+        header('Location: ' . BASE . '/contract/contracts/' . $contractId);
         exit;
     }
 
