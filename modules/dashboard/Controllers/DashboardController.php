@@ -10,11 +10,11 @@ use Core\View;
 
 /**
  * Kernmodule-dashboard: waardegedreven KPI-widgets (omzet, openstaande
- * facturen, projectstatus, klantengroei) op basis van bestaande fa_*/hr_*/
- * projecten_*-tabellen, plus de module-kaarten ("App Store"-overzicht) voor
+ * facturen, projectstatus, klantengroei) op basis van bestaande fa_, hr_ en
+ * projecten_ tabellen, plus de module-kaarten ("App Store"-overzicht) voor
  * alle actieve modules van de tenant.
  *
- * Belangrijk: fa_*/hr_*/ct_*-tabellen worden (anders dan de SaaS-kerntabellen)
+ * Belangrijk: de fa_, hr_ en ct_ tabellen worden (anders dan de SaaS-kerntabellen)
  * niet automatisch aangemaakt door Database::initSchema() — die verwachten een
  * handmatige import van config/schema.sql. Elke query hieronder is daarom
  * defensief achter Database::tableExists() gezet, zodat een tenant die net is
