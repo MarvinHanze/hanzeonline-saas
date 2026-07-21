@@ -28,7 +28,7 @@ RUN printf '<VirtualHost *:80>\n\
         Require all granted\n\
     </Directory>\n\
     RewriteEngine On\n\
-    RewriteCond %{REQUEST_URI} ^/saas-platform/(assets|uploads)/(.*)$\n\
-    RewriteRule ^ /%1/%2 [L]\n\
+    RewriteCond %%{REQUEST_URI} ^/saas-platform/(assets|uploads)/(.*)$\n\
+    RewriteRule ^ /%%1/%%2 [L]\n\
     RewriteRule ^saas-platform/(.*)$ /$1 [L]\n\
 </VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf
