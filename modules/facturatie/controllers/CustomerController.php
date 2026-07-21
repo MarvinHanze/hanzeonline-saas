@@ -55,7 +55,7 @@ class CustomerController
             'notes' => trim($_POST['notes'] ?? ''),
         ]);
 
-        header('Location: /facturatie/klanten');
+        header('Location: ' . BASE . '/facturatie/klanten');
         exit;
     }
 
@@ -122,7 +122,7 @@ class CustomerController
             'notes' => trim($_POST['notes'] ?? ''),
         ], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
 
-        header("Location: /facturatie/klanten/$id");
+        header('Location: ' . BASE . '/facturatie/klanten/$id");
         exit;
     }
 
@@ -130,7 +130,7 @@ class CustomerController
     {
         $tenantId = Auth::user()['tenant_id'];
         Database::delete('fa_customers', 'id = ? AND tenant_id = ?', [$id, $tenantId]);
-        header('Location: /facturatie/klanten');
+        header('Location: ' . BASE . '/facturatie/klanten');
         exit;
     }
 }

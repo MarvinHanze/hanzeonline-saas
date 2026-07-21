@@ -8,6 +8,7 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <base href="/saas-platform/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verlof — HR Dashboard</title>

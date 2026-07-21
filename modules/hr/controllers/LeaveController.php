@@ -65,7 +65,7 @@ class LeaveController
 
         $days = (int) $_POST['days'];
         if ($employee && $days > $employee['leave_balance_days']) {
-            header('Location: /hr/verlof?error=insufficient_balance');
+            header('Location: ' . BASE . '/hr/verlof?error=insufficient_balance');
             exit;
         }
 
@@ -79,7 +79,7 @@ class LeaveController
             'notes' => trim($_POST['notes'] ?? ''),
         ]);
 
-        header('Location: /hr/verlof');
+        header('Location: ' . BASE . '/hr/verlof');
         exit;
     }
 
@@ -93,7 +93,7 @@ class LeaveController
         );
 
         if (!$request) {
-            header('Location: /hr/verlof');
+            header('Location: ' . BASE . '/hr/verlof');
             exit;
         }
 
@@ -107,7 +107,7 @@ class LeaveController
             [$request['days'], $request['employee_id'], $tenantId]
         );
 
-        header('Location: /hr/verlof');
+        header('Location: ' . BASE . '/hr/verlof');
         exit;
     }
 
@@ -120,7 +120,7 @@ class LeaveController
             'notes' => trim($_POST['reason'] ?? ''),
         ], 'id = ? AND tenant_id = ? AND status = ?', [(int) $id, $tenantId, 'ingediend']);
 
-        header('Location: /hr/verlof');
+        header('Location: ' . BASE . '/hr/verlof');
         exit;
     }
 }

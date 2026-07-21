@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 return [
     'name' => 'HanzeOnline SaaS',
-    'url' => 'https://app.hanzeonline.nl',
+    'url' => 'https://demo.hanzeonline.nl/saas-platform',
     'timezone' => 'Europe/Amsterdam',
     'debug' => false,
 

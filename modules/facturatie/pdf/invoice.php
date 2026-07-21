@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <base href="/saas-platform/">
     <meta charset="UTF-8">
     <style>
         body { font-family: sans-serif; font-size: 11px; color: #333; margin: 0; padding: 20px; }

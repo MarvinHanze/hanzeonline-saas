@@ -104,7 +104,7 @@ class ContractController
             'signature_data' => $content,
         ]);
 
-        header("Location: /contract/contracts/$contractId");
+        header('Location: ' . BASE . '/contract/contracts/$contractId");
         exit;
     }
 
@@ -200,7 +200,8 @@ class ContractController
             mkdir($pdfDir, 0775, true);
         }
 
-        $html = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+        $html = '<!DOCTYPE html><html><head>
+    <base href="/saas-platform/"><meta charset="utf-8"><style>
             body{font-family:sans-serif;padding:40px;color:#1e293b;}
             h1{font-size:22px;margin-bottom:8px;}
             .meta{color:#64748b;margin-bottom:24px;font-size:14px;}
@@ -254,7 +255,7 @@ class ContractController
 
         $signatureData = $_POST['signature_data'] ?? '';
         if (!$signatureData) {
-            header("Location: /contract/contracts/$id");
+            header('Location: ' . BASE . '/contract/contracts/$id");
             exit;
         }
 
@@ -271,7 +272,7 @@ class ContractController
             'status' => 'actief',
         ], 'id = ?', [$id]);
 
-        header("Location: /contract/contracts/$id");
+        header('Location: ' . BASE . '/contract/contracts/$id");
         exit;
     }
 
@@ -282,12 +283,12 @@ class ContractController
 
         $allowed = ['concept', 'actief', 'verlopen', 'vernieuwd', 'geannuleerd'];
         if (!in_array($status, $allowed)) {
-            header("Location: /contract/contracts/$id");
+            header('Location: ' . BASE . '/contract/contracts/$id");
             exit;
         }
 
         Database::update('ct_contracts', ['status' => $status], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
-        header("Location: /contract/contracts/$id");
+        header('Location: ' . BASE . '/contract/contracts/$id");
         exit;
     }
 

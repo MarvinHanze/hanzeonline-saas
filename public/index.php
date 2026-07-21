@@ -9,6 +9,7 @@ use Core\Router;
 use Core\Tenant;
 use Core\View;
 
+define('BASE', '/saas-platform');
 session_start();
 
 // Initialize database schema
@@ -44,7 +45,7 @@ $router->post('/login', function() {
 
     if (Auth::login($email, $password, (int) $tenant['id'])) {
         Tenant::load((int) $tenant['id']);
-        header('Location: /');
+        header('Location: ' . BASE . '/');
         exit;
     }
 
@@ -68,13 +69,13 @@ $router->post('/register', function() {
     $tenantId = Auth::registerTenant($company, $email, $password, $name);
     Auth::login($email, $password, $tenantId);
     Tenant::load($tenantId);
-    header('Location: /');
+    header('Location: ' . BASE . '/');
     exit;
 });
 
 $router->get('/logout', function() {
     Auth::logout();
-    header('Location: /login');
+    header('Location: ' . BASE . '/login');
     exit;
 });
 

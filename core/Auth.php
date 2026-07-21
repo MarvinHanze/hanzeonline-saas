@@ -49,7 +49,7 @@ class Auth
     public static function requireLogin(): void
     {
         if (!self::isLoggedIn()) {
-            header('Location: /login');
+            header('Location: ' . BASE . '/login');
             exit;
         }
         Database::setTenant((int) $_SESSION['tenant_id']);

@@ -7,6 +7,7 @@ $brandColor = '#059669';
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <base href="/saas-platform/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nieuwe medewerker — HR Dashboard</title>

@@ -20,3 +20,13 @@ RUN mkdir -p /var/www/html/public/uploads \
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+
+RUN printf '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    RewriteEngine On\n\
+    RewriteRule ^saas-platform/(.*)$ /$1 [L]\n\
+</VirtualHost>\n' > /etc/apache2/sites-available/000-default.conf

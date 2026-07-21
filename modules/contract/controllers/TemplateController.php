@@ -40,7 +40,7 @@ class TemplateController
             'variables' => json_encode($this->extractVariables($_POST['content_html'] ?? '')),
         ]);
 
-        header('Location: /contract/sjablonen');
+        header('Location: ' . BASE . '/contract/sjablonen');
         exit;
     }
 
@@ -74,7 +74,7 @@ class TemplateController
             'variables' => json_encode($this->extractVariables($_POST['content_html'] ?? '')),
         ], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
 
-        header('Location: /contract/sjablonen');
+        header('Location: ' . BASE . '/contract/sjablonen');
         exit;
     }
 
