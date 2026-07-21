@@ -1,0 +1,18 @@
+RewriteEngine On
+RewriteBase /
+
+# Prevent directory browsing
+Options -Indexes
+
+# Handle assets directly
+RewriteCond %{REQUEST_URI} ^/(assets|uploads)/
+RewriteRule ^ - [L]
+
+# API routes
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^ api/index.php [L,QSA]
+
+# Module routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
