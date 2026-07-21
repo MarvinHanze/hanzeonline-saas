@@ -210,3 +210,183 @@ CREATE TABLE IF NOT EXISTS contract_signatures (
     signed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (contract_id) REFERENCES ct_contracts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- CRM (leads, offertes, verkooporders)
+-- ============================================
+-- Let op: deze tabellen (en de projecten_*/voorraad_* hieronder) worden ook
+-- automatisch aangemaakt door Core\Database::initSchema() bij elke request
+-- (net als tenant_modules/permissions/api_tokens) — dit bestand is puur
+-- documentatie/referentie, geen aparte migratiestap is vereist.
+
+CREATE TABLE IF NOT EXISTS crm_leads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    company VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    source VARCHAR(100),
+    status ENUM('nieuw','gekwalificeerd','offerte','gewonnen','verloren') DEFAULT 'nieuw',
+    value DECIMAL(10,2) DEFAULT 0,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS crm_quotes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    lead_id INT NULL,
+    number VARCHAR(50) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    status ENUM('concept','verstuurd','geaccepteerd','afgewezen') DEFAULT 'concept',
+    amount DECIMAL(10,2) DEFAULT 0,
+    valid_until DATE NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (lead_id) REFERENCES crm_leads(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS crm_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    quote_id INT NULL,
+    number VARCHAR(50) NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    status ENUM('nieuw','in_behandeling','geleverd','gefactureerd','geannuleerd') DEFAULT 'nieuw',
+    amount DECIMAL(10,2) DEFAULT 0,
+    order_date DATE NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (quote_id) REFERENCES crm_quotes(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- PROJECTEN (projectmanagement, taken, urenregistratie)
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS projecten_projects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    client_name VARCHAR(255),
+    status ENUM('gepland','actief','on_hold','afgerond','geannuleerd') DEFAULT 'gepland',
+    start_date DATE NULL,
+    end_date DATE NULL,
+    budget_hours DECIMAL(8,2) DEFAULT 0,
+    budget_amount DECIMAL(10,2) DEFAULT 0,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS projecten_tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    project_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    assignee_id INT NULL,
+    status ENUM('open','bezig','klaar') DEFAULT 'open',
+    due_date DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES projecten_projects(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS projecten_time_entries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    project_id INT NOT NULL,
+    task_id INT NULL,
+    user_id INT NOT NULL,
+    entry_date DATE NOT NULL,
+    hours DECIMAL(5,2) NOT NULL,
+    description VARCHAR(500),
+    billable TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES projecten_projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES projecten_tasks(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- VOORRAAD (magazijnen, producten/voorraad, inkooporders, materieel)
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS voorraad_warehouses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS voorraad_products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    sku VARCHAR(100) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    unit VARCHAR(30) DEFAULT 'stuks',
+    purchase_price DECIMAL(10,2) DEFAULT 0,
+    sales_price DECIMAL(10,2) DEFAULT 0,
+    min_stock INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS voorraad_stock (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    product_id INT NOT NULL,
+    warehouse_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    UNIQUE KEY unique_product_warehouse (product_id, warehouse_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES voorraad_products(id) ON DELETE CASCADE,
+    FOREIGN KEY (warehouse_id) REFERENCES voorraad_warehouses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS voorraad_purchase_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    number VARCHAR(50) NOT NULL,
+    supplier_name VARCHAR(255) NOT NULL,
+    status ENUM('concept','besteld','ontvangen','geannuleerd') DEFAULT 'concept',
+    order_date DATE NULL,
+    expected_date DATE NULL,
+    warehouse_id INT NULL,
+    total DECIMAL(10,2) DEFAULT 0,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    FOREIGN KEY (warehouse_id) REFERENCES voorraad_warehouses(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS voorraad_purchase_order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    purchase_order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) DEFAULT 0,
+    FOREIGN KEY (purchase_order_id) REFERENCES voorraad_purchase_orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES voorraad_products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS voorraad_equipment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100),
+    serial_number VARCHAR(100),
+    status ENUM('beschikbaar','in_gebruik','onderhoud','defect') DEFAULT 'beschikbaar',
+    assigned_to VARCHAR(255),
+    location VARCHAR(255),
+    purchase_date DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

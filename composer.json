@@ -12,7 +12,16 @@
             "Core\\": "core/",
             "Modules\\Facturatie\\": "modules/facturatie/",
             "Modules\\Hr\\": "modules/hr/",
-            "Modules\\Contract\\": "modules/contract/"
+            "Modules\\Contract\\": "modules/contract/",
+            "Modules\\Dashboard\\": "modules/dashboard/",
+            "Modules\\Beheer\\": "modules/beheer/",
+            "Modules\\Crm\\": "modules/crm/",
+            "Modules\\Projecten\\": "modules/projecten/",
+            "Modules\\Voorraad\\": "modules/voorraad/",
+            "Modules\\Esg\\": "modules/esg/",
+            "Modules\\Incidenten\\": "modules/incidenten/",
+            "Modules\\Integraties\\": "modules/integraties/",
+            "Api\\V1\\": "api/v1/"
         }
     }
 }

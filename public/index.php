@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Core\Database;
 use Core\Auth;
+use Core\Database;
 use Core\Router;
 use Core\Tenant;
+use Core\Totp;
 use Core\View;
 
 define('BASE', '/saas-platform');
@@ -25,7 +26,7 @@ $router = new Router();
 
 // Auth routes (no tenant required)
 $router->get('/login', fn() => require __DIR__ . '/../core/views/login.php');
-$router->post('/login', function() {
+$router->post('/login', function () {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $tenantSlug = trim($_POST['tenant'] ?? '');
@@ -43,38 +44,126 @@ $router->post('/login', function() {
         return;
     }
 
-    if (Auth::login($email, $password, (int) $tenant['id'])) {
-        Tenant::load((int) $tenant['id']);
-        header('Location: ' . BASE . '/');
+    $user = Auth::attempt($email, $password, (int) $tenant['id']);
+    if (!$user) {
+        $error = 'Ongeldige inloggegevens.';
+        require __DIR__ . '/../core/views/login.php';
+        return;
+    }
+
+    if (Auth::requiresTwoFactor($user)) {
+        Auth::beginTwoFactorChallenge($user, (int) $tenant['id']);
+        header('Location: ' . BASE . '/login/2fa');
         exit;
     }
 
-    $error = 'Ongeldige inloggegevens.';
-    require __DIR__ . '/../core/views/login.php';
+    Auth::establishSession($user, (int) $tenant['id']);
+    Tenant::load((int) $tenant['id']);
+    header('Location: ' . BASE . '/dashboard');
+    exit;
 });
 
-$router->get('/register', function() { header('Location: ' . BASE . '/login'); exit; });
-$router->post('/register', function() { header('Location: ' . BASE . '/login'); exit; });
+// Tweede stap van de login als het account 2FA (TOTP) heeft ingeschakeld.
+$router->get('/login/2fa', function () {
+    if (!Auth::hasPendingTwoFactor()) {
+        header('Location: ' . BASE . '/login');
+        exit;
+    }
+    require __DIR__ . '/../core/views/login_2fa.php';
+});
+$router->post('/login/2fa', function () {
+    $pendingUser = Auth::pendingTwoFactorUser();
+    if (!$pendingUser) {
+        header('Location: ' . BASE . '/login');
+        exit;
+    }
 
-$router->get('/logout', function() {
+    $code = trim($_POST['code'] ?? '');
+    if (!Totp::verify((string) $pendingUser['totp_secret'], $code)) {
+        $error = 'Ongeldige of verlopen verificatiecode.';
+        require __DIR__ . '/../core/views/login_2fa.php';
+        return;
+    }
+
+    $tenantId = (int) $_SESSION['pending_2fa_tenant_id'];
+    Auth::establishSession($pendingUser, $tenantId);
+    Tenant::load($tenantId);
+    header('Location: ' . BASE . '/dashboard');
+    exit;
+});
+
+// Zelfregistratie van een nieuwe tenant (14 dagen trial, plan 'starter').
+$router->get('/register', function () {
+    require __DIR__ . '/../core/views/register.php';
+});
+$router->post('/register', function () {
+    $company = trim($_POST['company'] ?? '');
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($company === '' || $name === '' || $email === '' || $password === '') {
+        $error = 'Vul alle velden in.';
+        require __DIR__ . '/../core/views/register.php';
+        return;
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Vul een geldig e-mailadres in.';
+        require __DIR__ . '/../core/views/register.php';
+        return;
+    }
+    if (!Auth::isStrongPassword($password)) {
+        $error = 'Wachtwoord moet minimaal 8 tekens bevatten, met minstens 1 letter en 1 cijfer.';
+        require __DIR__ . '/../core/views/register.php';
+        return;
+    }
+    if (Database::fetch("SELECT id FROM users WHERE email = ?", [$email])) {
+        $error = 'Dit e-mailadres is al in gebruik.';
+        require __DIR__ . '/../core/views/register.php';
+        return;
+    }
+
+    $tenantId = Auth::registerTenant($company, $email, $password, $name);
+    $user = Auth::attempt($email, $password, $tenantId);
+    Auth::establishSession($user, $tenantId);
+    Tenant::load($tenantId);
+
+    header('Location: ' . BASE . '/beheer/onboarding');
+    exit;
+});
+
+$router->get('/logout', function () {
     Auth::logout();
     header('Location: ' . BASE . '/login');
     exit;
 });
 
-// Protected routes — require auth
-$router->get('/', function() {
+// Protected root — stuurt door naar de nieuwe dashboard-module.
+$router->get('/', function () {
     Auth::requireLogin();
-    Tenant::load((int) $_SESSION['tenant_id']);
-    require __DIR__ . '/../core/views/dashboard.php';
+    (new \Modules\Dashboard\Controllers\DashboardController())->index();
 });
 
-// Load module routes
+// Load module routes.
+// Per-tenant module-activatie: kernmodules (dashboard/beheer) laden altijd,
+// overige modules alleen als de ingelogde tenant ze heeft geactiveerd in
+// tenant_modules (zie Core\Tenant::hasModule()). Een globale 'enabled'-vlag
+// in config/modules.php blijft een ops-niveau kill-switch.
 $modules = require __DIR__ . '/../config/modules.php';
 foreach ($modules as $key => $module) {
-    if ($module['enabled'] && file_exists(__DIR__ . "/../modules/$key/routes.php") && Auth::isLoggedIn()) {
-        require __DIR__ . "/../modules/$key/routes.php";
+    if (empty($module['enabled'])) {
+        continue;
     }
+    if (!file_exists(__DIR__ . "/../modules/$key/routes.php")) {
+        continue;
+    }
+    if (!Auth::isLoggedIn()) {
+        continue;
+    }
+    if (empty($module['core']) && !Tenant::hasModule($key)) {
+        continue;
+    }
+    require __DIR__ . "/../modules/$key/routes.php";
 }
 
 // Dispatch
