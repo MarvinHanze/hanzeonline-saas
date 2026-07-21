@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <base href="/saas-platform/">
+    <base href="<?= BASE ?>/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registreren — HanzeOnline</title>
@@ -74,7 +74,7 @@
     </div>
 
     <p class="mt-6 text-center text-xs text-slate-400">
-        Al een account? <a href="/login" class="text-brand-500 hover:underline">Inloggen</a>
+        Al een account? <a href="<?= BASE ?>/login" class="text-brand-500 hover:underline">Inloggen</a>
     </p>
 </div>
 </body>

@@ -7,7 +7,7 @@ $brandColor = '#059669';
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <base href="/saas-platform/">
+    <base href="<?= BASE ?>/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nieuwe medewerker — HR Dashboard</title>
@@ -36,25 +36,25 @@ $brandColor = '#059669';
             <span class="font-bold text-slate-900">HR Dashboard</span>
         </div>
         <nav class="p-4 space-y-1">
-            <a href="/hr" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Overzicht</a>
-            <a href="/hr/medewerkers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700">Medewerkers</a>
-            <a href="/hr/verlof" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Verlof</a>
-            <a href="/hr/organogram" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Organogram</a>
-            <a href="/hr/beoordelingen" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Beoordelingen</a>
+            <a href="<?= BASE ?>/hr" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Overzicht</a>
+            <a href="<?= BASE ?>/hr/medewerkers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700">Medewerkers</a>
+            <a href="<?= BASE ?>/hr/verlof" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Verlof</a>
+            <a href="<?= BASE ?>/hr/organogram" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Organogram</a>
+            <a href="<?= BASE ?>/hr/beoordelingen" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Beoordelingen</a>
         </nav>
     </aside>
 
     <div class="flex-1 lg:ml-64">
         <header class="bg-white border-b border-slate-200 h-16 flex items-center px-4 sm:px-6 lg:px-8">
             <div class="lg:hidden w-10"></div>
-            <a href="/hr/medewerkers" class="text-slate-400 hover:text-slate-600 mr-3">
+            <a href="<?= BASE ?>/hr/medewerkers" class="text-slate-400 hover:text-slate-600 mr-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
             </a>
             <h1 class="text-lg font-semibold text-slate-900">Nieuwe medewerker</h1>
         </header>
 
         <main class="p-4 sm:p-6 lg:p-8 max-w-2xl">
-            <form method="POST" action="/hr/medewerkers" class="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
+            <form method="POST" action="<?= BASE ?>/hr/medewerkers" class="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Naam *</label>
                     <input type="text" name="name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
@@ -106,7 +106,7 @@ $brandColor = '#059669';
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="px-5 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700">Opslaan</button>
-                    <a href="/hr/medewerkers" class="px-5 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200">Annuleren</a>
+                    <a href="<?= BASE ?>/hr/medewerkers" class="px-5 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200">Annuleren</a>
                 </div>
             </form>
         </main>

@@ -10,7 +10,7 @@ $tenantName = Tenant::name();
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <base href="/saas-platform/">
+    <base href="<?= BASE ?>/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — <?= htmlspecialchars($tenantName) ?></title>
@@ -30,7 +30,7 @@ $tenantName = Tenant::name();
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center gap-8">
-                    <a href="/" class="flex items-center gap-2">
+                    <a href="<?= BASE ?>/" class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
                             <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -40,9 +40,9 @@ $tenantName = Tenant::name();
                         <span class="font-bold text-slate-900 hidden sm:block"><?= htmlspecialchars($tenantName) ?></span>
                     </a>
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-900 bg-slate-100">Dashboard</a>
+                        <a href="<?= BASE ?>/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-900 bg-slate-100">Dashboard</a>
                         <?php foreach ($modules as $key => $module): ?>
-                            <a href="/<?= $key ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+                            <a href="<?= BASE ?>/<?= $key ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50">
                                 <?= htmlspecialchars($module['name']) ?>
                             </a>
                         <?php endforeach; ?>
@@ -53,7 +53,7 @@ $tenantName = Tenant::name();
                         <p class="text-sm font-medium text-slate-700"><?= htmlspecialchars($user['name']) ?></p>
                         <p class="text-xs text-slate-500"><?= htmlspecialchars($user['role']) ?></p>
                     </div>
-                    <a href="/logout" class="text-sm text-slate-500 hover:text-slate-700">Uitloggen</a>
+                    <a href="<?= BASE ?>/logout" class="text-sm text-slate-500 hover:text-slate-700">Uitloggen</a>
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@ $tenantName = Tenant::name();
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($modules as $key => $module): ?>
-                <a href="/<?= $key ?>" class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                <a href="<?= BASE ?>/<?= $key ?>" class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                     <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <?php if ($key === 'facturatie'): ?>

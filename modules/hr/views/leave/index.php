@@ -8,7 +8,7 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <base href="/saas-platform/">
+    <base href="<?= BASE ?>/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verlof — HR Dashboard</title>
@@ -37,11 +37,11 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
             <span class="font-bold text-slate-900">HR Dashboard</span>
         </div>
         <nav class="p-4 space-y-1">
-            <a href="/hr" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Overzicht</a>
-            <a href="/hr/medewerkers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Medewerkers</a>
-            <a href="/hr/verlof" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700">Verlof</a>
-            <a href="/hr/organogram" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Organogram</a>
-            <a href="/hr/beoordelingen" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Beoordelingen</a>
+            <a href="<?= BASE ?>/hr" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Overzicht</a>
+            <a href="<?= BASE ?>/hr/medewerkers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Medewerkers</a>
+            <a href="<?= BASE ?>/hr/verlof" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700">Verlof</a>
+            <a href="<?= BASE ?>/hr/organogram" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Organogram</a>
+            <a href="<?= BASE ?>/hr/beoordelingen" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Beoordelingen</a>
         </nav>
     </aside>
 
@@ -58,10 +58,10 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
         <main class="p-4 sm:p-6 lg:p-8">
             <!-- Status filter -->
             <div class="flex gap-2 mb-6 overflow-x-auto">
-                <a href="/hr/verlof" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === '' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Alle</a>
-                <a href="/hr/verlof?status=ingediend" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'ingediend' ? 'bg-yellow-500 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Ingediend</a>
-                <a href="/hr/verlof?status=goedgekeurd" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'goedgekeurd' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Goedgekeurd</a>
-                <a href="/hr/verlof?status=afgewezen" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'afgewezen' ? 'bg-red-500 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Afgewezen</a>
+                <a href="<?= BASE ?>/hr/verlof" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === '' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Alle</a>
+                <a href="<?= BASE ?>/hr/verlof?status=ingediend" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'ingediend' ? 'bg-yellow-500 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Ingediend</a>
+                <a href="<?= BASE ?>/hr/verlof?status=goedgekeurd" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'goedgekeurd' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Goedgekeurd</a>
+                <a href="<?= BASE ?>/hr/verlof?status=afgewezen" class="px-4 py-2 rounded-lg text-sm font-medium <?= $status === 'afgewezen' ? 'bg-red-500 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' ?>">Afgewezen</a>
             </div>
 
             <!-- Table -->
@@ -99,10 +99,10 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
                                         <td class="px-5 py-3 text-right">
                                             <?php if ($req['status'] === 'ingediend'): ?>
                                                 <div class="flex gap-2 justify-end">
-                                                    <form method="POST" action="/hr/verlof/<?= $req['id'] ?>/goedkeuren">
+                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/goedkeuren">
                                                         <button type="submit" class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-lg hover:bg-emerald-200">Goedkeuren</button>
                                                     </form>
-                                                    <form method="POST" action="/hr/verlof/<?= $req['id'] ?>/afwijzen" class="flex gap-1">
+                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/afwijzen" class="flex gap-1">
                                                         <input type="text" name="reason" placeholder="Reden..." class="px-2 py-1 border border-slate-300 rounded text-xs w-32">
                                                         <button type="submit" class="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200">Afwijzen</button>
                                                     </form>
@@ -129,7 +129,7 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        <form method="POST" action="/hr/verlof" class="space-y-4">
+        <form method="POST" action="<?= BASE ?>/hr/verlof" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Medewerker *</label>
                 <select name="employee_id" required class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
