@@ -255,7 +255,7 @@ class ContractController
 
         $signatureData = $_POST['signature_data'] ?? '';
         if (!$signatureData) {
-            header('Location: ' . BASE . '/contract/contracts/$id");
+            header('Location: ' . BASE . '/contract/contracts/' . $id);
             exit;
         }
 
@@ -272,7 +272,7 @@ class ContractController
             'status' => 'actief',
         ], 'id = ?', [$id]);
 
-        header('Location: ' . BASE . '/contract/contracts/$id");
+        header('Location: ' . BASE . '/contract/contracts/' . $id);
         exit;
     }
 
@@ -283,12 +283,12 @@ class ContractController
 
         $allowed = ['concept', 'actief', 'verlopen', 'vernieuwd', 'geannuleerd'];
         if (!in_array($status, $allowed)) {
-            header('Location: ' . BASE . '/contract/contracts/$id");
+            header('Location: ' . BASE . '/contract/contracts/' . $id);
             exit;
         }
 
         Database::update('ct_contracts', ['status' => $status], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
-        header('Location: ' . BASE . '/contract/contracts/$id");
+        header('Location: ' . BASE . '/contract/contracts/' . $id);
         exit;
     }
 

@@ -163,7 +163,7 @@ class InvoiceController
         $status = $_POST['status'] ?? '';
 
         if (!in_array($status, ['concept', 'verstuurd', 'betaald', 'achterstallig', 'geannuleerd'])) {
-            header('Location: ' . BASE . '/facturatie/facturen/$id");
+            header('Location: ' . BASE . '/facturatie/facturen/' . $id);
             exit;
         }
 
@@ -173,7 +173,7 @@ class InvoiceController
         }
 
         Database::update('fa_invoices', $updates, 'id = ? AND tenant_id = ?', [$id, $tenantId]);
-        header('Location: ' . BASE . '/facturatie/facturen/$id");
+        header('Location: ' . BASE . '/facturatie/facturen/' . $id);
         exit;
     }
 
@@ -219,7 +219,7 @@ class InvoiceController
         );
 
         if (!$invoice || !$invoice['customer_email']) {
-            header('Location: ' . BASE . '/facturatie/facturen/$id");
+            header('Location: ' . BASE . '/facturatie/facturen/' . $id);
             exit;
         }
 
@@ -244,7 +244,7 @@ class InvoiceController
             'type' => 'eerste',
         ]);
 
-        header('Location: ' . BASE . '/facturatie/facturen/$id");
+        header('Location: ' . BASE . '/facturatie/facturen/' . $id);
         exit;
     }
 }
