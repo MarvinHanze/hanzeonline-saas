@@ -14,7 +14,9 @@ COPY composer.json .
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 COPY . .
-RUN chown -R www-data:www-data /var/www/html/public/uploads && chmod -R 775 /var/www/html/public/uploads
+RUN mkdir -p /var/www/html/public/uploads \
+    && chown -R www-data:www-data /var/www/html/public/uploads \
+    && chmod -R 775 /var/www/html/public/uploads
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
