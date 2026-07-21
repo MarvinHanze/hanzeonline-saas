@@ -220,6 +220,41 @@ class Database
         self::initVoorraadSchema($pdo);
 
         self::seedPermissions();
+        self::seedDemoTenant();
+    }
+
+    /**
+     * Idempotente demo-tenant zodat de inloggegevens die op de loginpagina staan
+     * (demo-bedrijf / admin@demo.nl / demo123) ook echt werken, net als bij de
+     * losse demo-apps. Doet niets als de tenant al bestaat.
+     */
+    private static function seedDemoTenant(): void
+    {
+        $pdo = self::connect();
+        $tenant = self::fetch("SELECT id FROM tenants WHERE slug = 'demo-bedrijf'");
+        if ($tenant) {
+            return;
+        }
+
+        $pdo->exec("INSERT INTO tenants (name, slug, plan) VALUES ('Demo Bedrijf', 'demo-bedrijf', 'business')");
+        $tenantId = (int) $pdo->lastInsertId();
+
+        $stmt = $pdo->prepare(
+            "INSERT INTO users (tenant_id, email, password, name, role) VALUES (?, ?, ?, ?, 'owner')"
+        );
+        $stmt->execute([$tenantId, 'admin@demo.nl', password_hash('demo123', PASSWORD_DEFAULT), 'Demo Beheerder']);
+
+        $pdo->prepare(
+            "INSERT INTO subscriptions (tenant_id, plan, status) VALUES (?, 'business', 'active')"
+        )->execute([$tenantId]);
+
+        $coreModules = ['facturatie', 'hr', 'contract', 'crm', 'projecten', 'voorraad'];
+        $stmt = $pdo->prepare(
+            "INSERT INTO tenant_modules (tenant_id, module_key, enabled, enabled_at) VALUES (?, ?, 1, NOW())"
+        );
+        foreach ($coreModules as $key) {
+            $stmt->execute([$tenantId, $key]);
+        }
     }
 
     /** --- CRM-module: leads, offertes, verkooporders --- */
