@@ -53,25 +53,8 @@ $router->post('/login', function() {
     require __DIR__ . '/../core/views/login.php';
 });
 
-$router->get('/register', fn() => require __DIR__ . '/../core/views/register.php');
-$router->post('/register', function() {
-    $company = trim($_POST['company'] ?? '');
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if ($company === '' || $name === '' || $email === '' || $password === '') {
-        $error = 'Vul alle velden in.';
-        require __DIR__ . '/../core/views/register.php';
-        return;
-    }
-
-    $tenantId = Auth::registerTenant($company, $email, $password, $name);
-    Auth::login($email, $password, $tenantId);
-    Tenant::load($tenantId);
-    header('Location: ' . BASE . '/');
-    exit;
-});
+$router->get('/register', function() { header('Location: ' . BASE . '/login'); exit; });
+$router->post('/register', function() { header('Location: ' . BASE . '/login'); exit; });
 
 $router->get('/logout', function() {
     Auth::logout();

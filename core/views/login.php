@@ -65,9 +65,12 @@
         </form>
     </div>
 
-    <p class="mt-6 text-center text-xs text-slate-400">
-        Nog geen account? <a href="/register" class="text-brand-500 hover:underline">Registreren</a>
-    </p>
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-700 space-y-1">
+        <p class="font-semibold">Demo gegevens</p>
+        <p>Bedrijf: <span class="font-mono font-semibold">demo-bedrijf</span></p>
+        <p>E-mail: <span class="font-mono font-semibold">admin@demo.nl</span></p>
+        <p>Wachtwoord: <span class="font-mono font-semibold">demo123</span></p>
+    </div>
 </div>
 </body>
 </html>
