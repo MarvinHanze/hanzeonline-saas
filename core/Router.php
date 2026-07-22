@@ -60,6 +60,15 @@ class Router
             }
         }
 
+        // Een onbekend pad is vaak gewoon een module-URL die (nog) niet is
+        // geregistreerd omdat de bezoeker niet is ingelogd (module-routes
+        // worden pas geladen na authenticatie). Stuur in dat geval netjes
+        // naar de inlogpagina i.p.v. een kale 404 te tonen.
+        if (!Auth::isLoggedIn() && $uri !== '/login' && $uri !== '/register') {
+            header('Location: ' . BASE . '/login');
+            exit;
+        }
+
         http_response_code(404);
         echo '404 Not Found';
     }
