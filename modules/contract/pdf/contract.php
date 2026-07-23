@@ -28,7 +28,7 @@
     <div class="header">
         <h1><?= htmlspecialchars($contract['title'] ?? 'CONTRACT') ?></h1>
         <p><?= htmlspecialchars($company['name']) ?></p>
-        <p><?= htmlspecialchars($company['address']) ?></p>
+        <p><?= htmlspecialchars($company['address'] ?? '') ?></p>
     </div>
 
     <div class="meta">
@@ -77,7 +77,7 @@
     <?php endif; ?>
 
     <div class="footer">
-        <p><?= htmlspecialchars($company['name']) ?> · <?= htmlspecialchars($company['address']) ?> · KvK <?= htmlspecialchars($company['kvk'] ?? '') ?></p>
+        <p><?= htmlspecialchars($company['name']) ?> · <?= htmlspecialchars($company['address'] ?? '') ?> · KvK <?= htmlspecialchars($company['kvk'] ?? '') ?></p>
         <p>Dit document is gegenereerd op <?= date('d-m-Y H:i') ?></p>
     </div>
 </body>

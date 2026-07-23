@@ -34,7 +34,7 @@
     <div class="header">
         <div class="company">
             <h1><?= htmlspecialchars($company['name']) ?></h1>
-            <p><?= htmlspecialchars($company['address']) ?></p>
+            <p><?= htmlspecialchars($company['address'] ?? '') ?></p>
             <p>KvK: <?= htmlspecialchars($company['kvk'] ?? '') ?></p>
             <p>BTW: <?= htmlspecialchars($company['btw_nr'] ?? '') ?></p>
         </div>
@@ -115,7 +115,7 @@
     <?php endif; ?>
 
     <div class="footer">
-        <p><?= htmlspecialchars($company['name']) ?> · <?= htmlspecialchars($company['address']) ?> · KvK <?= htmlspecialchars($company['kvk'] ?? '') ?> · BTW <?= htmlspecialchars($company['btw_nr'] ?? '') ?></p>
+        <p><?= htmlspecialchars($company['name']) ?> · <?= htmlspecialchars($company['address'] ?? '') ?> · KvK <?= htmlspecialchars($company['kvk'] ?? '') ?> · BTW <?= htmlspecialchars($company['btw_nr'] ?? '') ?></p>
     </div>
 </body>
 </html>
