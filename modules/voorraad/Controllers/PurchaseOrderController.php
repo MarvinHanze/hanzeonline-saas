@@ -51,6 +51,16 @@ class PurchaseOrderController
         $total = $quantity * $unitPrice;
         $warehouseId = (int) ($_POST['warehouse_id'] ?? 0);
 
+        // Beveiliging: product_id/warehouse_id moeten bij DEZE tenant horen —
+        // anders zou een gemanipuleerd id een inkooporderregel kunnen koppelen aan
+        // een product/magazijn van een andere tenant.
+        if ($productId > 0 && !Database::fetch("SELECT id FROM voorraad_products WHERE id = ? AND tenant_id = ?", [$productId, $tenantId])) {
+            $productId = 0;
+        }
+        if ($warehouseId > 0 && !Database::fetch("SELECT id FROM voorraad_warehouses WHERE id = ? AND tenant_id = ?", [$warehouseId, $tenantId])) {
+            $warehouseId = 0;
+        }
+
         $number = 'PO-' . date('Y') . '-' . str_pad((string) (Database::count('voorraad_purchase_orders', 'tenant_id = ?', [$tenantId]) + 1), 4, '0', STR_PAD_LEFT);
 
         $orderId = Database::insert('voorraad_purchase_orders', [

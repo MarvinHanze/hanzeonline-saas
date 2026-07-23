@@ -65,9 +65,17 @@ class EmployeeController
         Permission::require('hr.manage');
         $tenantId = (int) Auth::user()['tenant_id'];
 
+        // Beveiliging: department_id moet bij DEZE tenant horen — anders zou een
+        // gemanipuleerd id een medewerker kunnen koppelen aan een afdeling van een
+        // andere tenant (diens naam lekt dan mee via de LEFT JOIN in index()/show()).
+        $departmentId = (int) ($_POST['department_id'] ?: 0) ?: null;
+        if ($departmentId !== null && !Database::fetch("SELECT id FROM hr_departments WHERE id = ? AND tenant_id = ?", [$departmentId, $tenantId])) {
+            $departmentId = null;
+        }
+
         Database::insert('hr_employees', [
             'tenant_id' => $tenantId,
-            'department_id' => (int) ($_POST['department_id'] ?: 0) ?: null,
+            'department_id' => $departmentId,
             'name' => trim($_POST['name']),
             'email' => trim($_POST['email']),
             'phone' => trim($_POST['phone']),
@@ -153,8 +161,14 @@ class EmployeeController
         Permission::require('hr.manage');
         $tenantId = (int) Auth::user()['tenant_id'];
 
+        // Beveiliging: zie store() hierboven — department_id moet bij deze tenant horen.
+        $departmentId = (int) ($_POST['department_id'] ?: 0) ?: null;
+        if ($departmentId !== null && !Database::fetch("SELECT id FROM hr_departments WHERE id = ? AND tenant_id = ?", [$departmentId, $tenantId])) {
+            $departmentId = null;
+        }
+
         Database::update('hr_employees', [
-            'department_id' => (int) ($_POST['department_id'] ?: 0) ?: null,
+            'department_id' => $departmentId,
             'name' => trim($_POST['name']),
             'email' => trim($_POST['email']),
             'phone' => trim($_POST['phone']),

@@ -50,6 +50,13 @@ class QuoteController
         $number = 'OFF-' . date('Y') . '-' . str_pad((string) (Database::count('crm_quotes', 'tenant_id = ?', [$tenantId]) + 1), 4, '0', STR_PAD_LEFT);
         $leadId = (int) ($_POST['lead_id'] ?? 0);
 
+        // Beveiliging: lead_id moet bij deze tenant horen (zie InvoiceController::
+        // store() voor dezelfde reden — anders lekt een andere tenant's lead-naam
+        // mee via de LEFT JOIN in QuoteController::index()/show()).
+        if ($leadId > 0 && !Database::fetch("SELECT id FROM crm_leads WHERE id = ? AND tenant_id = ?", [$leadId, $tenantId])) {
+            $leadId = 0;
+        }
+
         $id = Database::insert('crm_quotes', [
             'tenant_id' => $tenantId,
             'lead_id' => $leadId > 0 ? $leadId : null,

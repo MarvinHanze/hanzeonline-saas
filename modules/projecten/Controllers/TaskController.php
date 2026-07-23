@@ -25,6 +25,14 @@ class TaskController
 
         $assigneeId = (int) ($_POST['assignee_id'] ?? 0);
 
+        // Beveiliging: assignee_id moet een user van DEZE tenant zijn — anders zou
+        // een gemanipuleerd id een taak kunnen koppelen aan een gebruiker van een
+        // andere tenant (diens naam lekt dan mee via de LEFT JOIN in
+        // ProjectController::show()).
+        if ($assigneeId > 0 && !Database::fetch("SELECT id FROM users WHERE id = ? AND tenant_id = ?", [$assigneeId, $tenantId])) {
+            $assigneeId = 0;
+        }
+
         Database::insert('projecten_tasks', [
             'tenant_id' => $tenantId,
             'project_id' => (int) $id,

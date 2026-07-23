@@ -48,6 +48,17 @@ class ErrorHandler
 
     private static function render(?string $debugMessage): void
     {
+        // Verwijder eventuele actieve output-buffers voordat de foutpagina wordt
+        // getoond. Zonder dit lekt een gedeeltelijk gerenderde template die
+        // halverwege crasht (bv. Core\PdfGenerator::loadView()/Core\View::render(),
+        // die allebei ob_start() gebruiken) alsnog mee in de response — inclusief
+        // eventuele echte data die daarin al was ge-echood vóór de crash. Live
+        // gereproduceerd: een crash midden in de factuur-PDF-template toonde de
+        // getoonde tenant-naam + partiële HTML vóór deze fix.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         if (!headers_sent()) {
             http_response_code(500);
         }

@@ -66,6 +66,16 @@ class InvoiceController
         $notes = trim($_POST['notes'] ?? '');
         $dueDate = $_POST['due_date'] ?? date('Y-m-d', strtotime('+30 days'));
 
+        // Beveiliging: customer_id komt uit de POST-data en moet bij DEZE tenant
+        // horen, anders zou een gemanipuleerd/geraden id een factuur kunnen
+        // koppelen aan een klant van een andere tenant (cross-tenant data-lek
+        // zodra de factuur getoond wordt, want i/c worden dan zonder tenant-check
+        // op de klant zelf gejoined).
+        if (!Database::fetch("SELECT id FROM fa_customers WHERE id = ? AND tenant_id = ?", [$customerId, $tenantId])) {
+            header('Location: ' . BASE . '/facturatie/facturen/nieuw?error=invalid_customer');
+            exit;
+        }
+
         $year = date('Y');
         $lastInvoice = Database::fetch(
             "SELECT number FROM fa_invoices WHERE tenant_id = ? AND number LIKE ? ORDER BY id DESC LIMIT 1",

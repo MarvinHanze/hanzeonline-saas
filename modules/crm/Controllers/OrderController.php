@@ -50,6 +50,12 @@ class OrderController
         $number = 'ORD-' . date('Y') . '-' . str_pad((string) (Database::count('crm_orders', 'tenant_id = ?', [$tenantId]) + 1), 4, '0', STR_PAD_LEFT);
         $quoteId = (int) ($_POST['quote_id'] ?? 0);
 
+        // Beveiliging: quote_id moet bij deze tenant horen (zelfde patroon als
+        // InvoiceController::store()/QuoteController::store()).
+        if ($quoteId > 0 && !Database::fetch("SELECT id FROM crm_quotes WHERE id = ? AND tenant_id = ?", [$quoteId, $tenantId])) {
+            $quoteId = 0;
+        }
+
         Database::insert('crm_orders', [
             'tenant_id' => $tenantId,
             'quote_id' => $quoteId > 0 ? $quoteId : null,

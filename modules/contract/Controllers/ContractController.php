@@ -86,6 +86,18 @@ class ContractController
         $employeeId = (int) ($_POST['employee_id'] ?? 0) ?: null;
         $notes = trim($_POST['notes'] ?? '');
 
+        // Beveiliging: customer_id/employee_id komen uit de POST-data en moeten bij
+        // DEZE tenant horen (zelfde reden als bij template_id hierboven, en
+        // hetzelfde patroon als Invoice/QuoteController::store()) — anders zou een
+        // gemanipuleerd id een contract kunnen koppelen aan een klant/medewerker
+        // van een andere tenant.
+        if ($customerId !== null && !Database::fetch("SELECT id FROM fa_customers WHERE id = ? AND tenant_id = ?", [$customerId, $tenantId])) {
+            $customerId = null;
+        }
+        if ($employeeId !== null && !Database::fetch("SELECT id FROM hr_employees WHERE id = ? AND tenant_id = ?", [$employeeId, $tenantId])) {
+            $employeeId = null;
+        }
+
         // Replace template variables if a template was selected. Als er GEEN
         // sjabloon is gekozen valt dit terug op de vrije "notities"-tekst van de
         // gebruiker — die wordt hierna ongefilterd als HTML gerenderd (show.php/

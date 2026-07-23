@@ -25,6 +25,13 @@ class TimeEntryController
 
         $taskId = (int) ($_POST['task_id'] ?? 0);
 
+        // Beveiliging: task_id moet een taak van DIT project (en dus deze tenant)
+        // zijn — anders zou een gemanipuleerd id een urenregel kunnen koppelen aan
+        // een taak van een ander project/tenant.
+        if ($taskId > 0 && !Database::fetch("SELECT id FROM projecten_tasks WHERE id = ? AND tenant_id = ? AND project_id = ?", [$taskId, $tenantId, (int) $id])) {
+            $taskId = 0;
+        }
+
         Database::insert('projecten_time_entries', [
             'tenant_id' => $tenantId,
             'project_id' => (int) $id,
