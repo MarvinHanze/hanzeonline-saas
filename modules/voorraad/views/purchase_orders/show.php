@@ -12,7 +12,7 @@ voorraadNav('purchase_orders');
         <h1 style="font-size:1.2rem;margin:0 0 .2rem;"><?= htmlspecialchars($order['number']) ?></h1>
         <p style="color:var(--hz-text-muted);margin:0;"><?= htmlspecialchars($order['supplier_name']) ?></p>
     </div>
-    <form method="post" action="<?= BASE ?>/voorraad/inkooporders/<?= (int) $order['id'] ?>/status">
+    <form method="post" action="<?= BASE ?>/voorraad/inkooporders/<?= (int) $order['id'] ?>/status"><?= \Core\Csrf::field() ?>
         <select name="status" onchange="this.form.submit()">
             <?php foreach ($statuses as $s): ?>
                 <option value="<?= $s ?>" <?= $order['status'] === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

@@ -5,11 +5,51 @@ namespace Core;
 
 class Auth
 {
+    /** Brute-force-drempel: na dit aantal mislukte pogingen binnen het tijdvenster wordt geblokkeerd. */
+    private const MAX_ATTEMPTS = 5;
+    private const LOCKOUT_MINUTES = 15;
+
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+    }
+
+    /**
+     * Generieke brute-force-bescherming, gebruikt voor zowel het wachtwoord op
+     * /login als de TOTP-code op /login/2fa. $identifier is bewust NIET het
+     * IP-adres alleen (te grof achter een gedeeld NAT/proxy) maar een combinatie
+     * van "wat" wordt geraden (account) zodat gerichte pogingen tegen één
+     * account worden geblokkeerd, ongeacht vanaf welk IP ze komen.
+     */
+    public static function isLockedOut(string $identifier): bool
+    {
+        if (!Database::tableExists('login_attempts')) {
+            return false;
+        }
+        $row = Database::fetch(
+            "SELECT COUNT(*) as c FROM login_attempts
+             WHERE identifier = ? AND attempted_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)",
+            [$identifier, self::LOCKOUT_MINUTES]
+        );
+        return (int) ($row['c'] ?? 0) >= self::MAX_ATTEMPTS;
+    }
+
+    public static function recordFailedAttempt(string $identifier): void
+    {
+        if (!Database::tableExists('login_attempts')) {
+            return;
+        }
+        Database::insert('login_attempts', ['identifier' => $identifier]);
+    }
+
+    public static function clearFailedAttempts(string $identifier): void
+    {
+        if (!Database::tableExists('login_attempts')) {
+            return;
+        }
+        Database::delete('login_attempts', 'identifier = ?', [$identifier]);
     }
 
     /**

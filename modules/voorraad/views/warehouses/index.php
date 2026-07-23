@@ -28,7 +28,7 @@ voorraadNav('warehouses');
 
     <div class="hz-card">
         <h2 style="margin:0 0 .75rem;font-size:1rem;">Nieuw magazijn</h2>
-        <form method="post" action="<?= BASE ?>/voorraad/magazijnen">
+        <form method="post" action="<?= BASE ?>/voorraad/magazijnen"><?= \Core\Csrf::field() ?>
             <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Naam</label></div>
             <div class="hz-field"><input type="text" name="location" placeholder=" "><label>Locatie / adres</label></div>
             <button type="submit" class="hz-btn hz-btn--primary">Toevoegen</button>

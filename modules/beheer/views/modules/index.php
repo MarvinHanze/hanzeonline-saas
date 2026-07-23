@@ -47,11 +47,11 @@ beheerNav('modules');
 
                 <?php if (empty($m['is_core']) && empty($m['placeholder'])): ?>
                     <?php if ($m['is_enabled']): ?>
-                        <form method="post" action="<?= BASE ?>/beheer/modules/<?= htmlspecialchars($key) ?>/deactiveren">
+                        <form method="post" action="<?= BASE ?>/beheer/modules/<?= htmlspecialchars($key) ?>/deactiveren"><?= \Core\Csrf::field() ?>
                             <button type="submit" class="hz-btn hz-btn--ghost" data-hz-confirm="Module '<?= htmlspecialchars($m['name']) ?>' uitschakelen voor dit account?">Uitschakelen</button>
                         </form>
                     <?php elseif ($m['allowed_by_plan']): ?>
-                        <form method="post" action="<?= BASE ?>/beheer/modules/<?= htmlspecialchars($key) ?>/activeren">
+                        <form method="post" action="<?= BASE ?>/beheer/modules/<?= htmlspecialchars($key) ?>/activeren"><?= \Core\Csrf::field() ?>
                             <button type="submit" class="hz-btn hz-btn--primary">Activeren</button>
                         </form>
                     <?php else: ?>

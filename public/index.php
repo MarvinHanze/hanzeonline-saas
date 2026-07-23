@@ -4,20 +4,41 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use Core\Auth;
+use Core\Csrf;
 use Core\Database;
+use Core\ErrorHandler;
 use Core\Router;
 use Core\Tenant;
 use Core\Totp;
 use Core\View;
 
 define('BASE', '/saas-platform');
+
+// Load config vroeg (nodig voor de debug-vlag van de errorhandler).
+$config = require __DIR__ . '/../config/app.php';
+
+// Nooit ruwe PHP-fouten/stacktraces naar de browser in productie — altijd
+// server-side loggen (zie core/ErrorHandler.php).
+ErrorHandler::register((bool) ($config['debug'] ?? false));
+
+// Sessie-cookie hardening: httpOnly (geen JS-toegang, XSS-mitigatie), Secure
+// (site is alleen bereikbaar via https://demo.hanzeonline.nl), SameSite=Lax
+// (CSRF-mitigatie in combinatie met Core\Csrf) en strict_mode (voorkomt
+// session-fixation via een door de aanvaller aangeleverd session-ID).
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => BASE . '/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
 
 // Initialize database schema
 Database::initSchema();
 
-// Load config
-$config = require __DIR__ . '/../config/app.php';
 date_default_timezone_set($config['timezone']);
 View::init(__DIR__ . '/..');
 
@@ -37,8 +58,18 @@ $router->post('/login', function () {
         return;
     }
 
+    // Brute-force-bescherming: max. 5 pogingen per 15 min. per account
+    // (e-mail + bedrijf), ongeacht vanaf welk IP.
+    $attemptId = 'login:' . strtolower($email) . '|' . strtolower($tenantSlug);
+    if (Auth::isLockedOut($attemptId)) {
+        $error = 'Te veel mislukte inlogpogingen. Probeer het over enkele minuten opnieuw.';
+        require __DIR__ . '/../core/views/login.php';
+        return;
+    }
+
     $tenant = Database::fetch("SELECT * FROM tenants WHERE slug = ?", [$tenantSlug]);
     if (!$tenant) {
+        Auth::recordFailedAttempt($attemptId);
         $error = 'Bedrijf niet gevonden.';
         require __DIR__ . '/../core/views/login.php';
         return;
@@ -46,10 +77,13 @@ $router->post('/login', function () {
 
     $user = Auth::attempt($email, $password, (int) $tenant['id']);
     if (!$user) {
+        Auth::recordFailedAttempt($attemptId);
         $error = 'Ongeldige inloggegevens.';
         require __DIR__ . '/../core/views/login.php';
         return;
     }
+
+    Auth::clearFailedAttempts($attemptId);
 
     if (Auth::requiresTwoFactor($user)) {
         Auth::beginTwoFactorChallenge($user, (int) $tenant['id']);
@@ -78,12 +112,24 @@ $router->post('/login/2fa', function () {
         exit;
     }
 
+    // Brute-force-bescherming op de TOTP-code (6 cijfers = maar 1 miljoen
+    // combinaties, dus ook hier een poging-limiet nodig).
+    $attemptId = '2fa:' . (int) $pendingUser['id'];
+    if (Auth::isLockedOut($attemptId)) {
+        $error = 'Te veel mislukte pogingen. Probeer het over enkele minuten opnieuw.';
+        require __DIR__ . '/../core/views/login_2fa.php';
+        return;
+    }
+
     $code = trim($_POST['code'] ?? '');
     if (!Totp::verify((string) $pendingUser['totp_secret'], $code)) {
+        Auth::recordFailedAttempt($attemptId);
         $error = 'Ongeldige of verlopen verificatiecode.';
         require __DIR__ . '/../core/views/login_2fa.php';
         return;
     }
+
+    Auth::clearFailedAttempts($attemptId);
 
     $tenantId = (int) $_SESSION['pending_2fa_tenant_id'];
     Auth::establishSession($pendingUser, $tenantId);

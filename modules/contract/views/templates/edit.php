@@ -68,7 +68,7 @@ $tenantName = Tenant::name();
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-2xl font-bold text-slate-900 mb-6">Sjabloon bewerken</h1>
 
-            <form method="POST" action="<?= BASE ?>/contract/sjablonen/<?= $template['id'] ?>" class="space-y-6">
+            <form method="POST" action="<?= BASE ?>/contract/sjablonen/<?= $template['id'] ?>" class="space-y-6"><?= \Core\Csrf::field() ?>
                 <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
                     <!-- Name -->
                     <div>

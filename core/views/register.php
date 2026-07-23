@@ -41,7 +41,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="post" class="space-y-4">
+        <form method="post" class="space-y-4"><?= \Core\Csrf::field() ?>
             <div>
                 <label for="company" class="block text-sm font-medium text-slate-700 mb-1">Bedrijfsnaam</label>
                 <input type="text" name="company" id="company" required

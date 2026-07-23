@@ -32,7 +32,7 @@
                     Facturen
                 </a>
                 <div class="border-t border-gray-200 my-3"></div>
-                <a href="<?= BASE ?>/"> class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100">
+                <a href="<?= BASE ?>/" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
                     Terug naar dashboard
                 </a>

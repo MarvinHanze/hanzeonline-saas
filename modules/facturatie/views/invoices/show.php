@@ -32,7 +32,7 @@
                     Facturen
                 </a>
                 <div class="border-t border-gray-200 my-3"></div>
-                <a href="<?= BASE ?>/"> class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100">
+                <a href="<?= BASE ?>/" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
                     Terug naar dashboard
                 </a>
@@ -83,7 +83,7 @@
                             </div>
                             <!-- Status change -->
                             <div class="flex items-center gap-2">
-                                <form method="POST" action="<?= BASE ?>/facturatie/facturen/<?= $invoice['id'] ?>/status" class="flex gap-2">
+                                <form method="POST" action="<?= BASE ?>/facturatie/facturen/<?= $invoice['id'] ?>/status" class="flex gap-2"><?= \Core\Csrf::field() ?>
                                     <select name="status" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
                                         <option value="concept" <?= $invoice['status'] === 'concept' ? 'selected' : '' ?>>Concept</option>
                                         <option value="verstuurd" <?= $invoice['status'] === 'verstuurd' ? 'selected' : '' ?>>Verstuurd</option>
@@ -191,7 +191,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             PDF downloaden
                         </a>
-                        <form method="POST" action="<?= BASE ?>/facturatie/facturen/<?= $invoice['id'] ?>/herinnering" class="inline">
+                        <form method="POST" action="<?= BASE ?>/facturatie/facturen/<?= $invoice['id'] ?>/herinnering" class="inline"><?= \Core\Csrf::field() ?>
                             <button type="submit" class="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-50" onclick="return confirm('Weet je zeker dat je een herinnering wilt versturen?')">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                 Herinnering versturen

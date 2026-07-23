@@ -21,7 +21,7 @@ voorraadNav('equipment');
                         <td><?= htmlspecialchars((string) $e['category']) ?></td>
                         <td><?= htmlspecialchars((string) $e['serial_number']) ?></td>
                         <td>
-                            <form method="post" action="<?= BASE ?>/voorraad/materieel/<?= (int) $e['id'] ?>/status" style="display:flex;gap:.4rem;align-items:center;">
+                            <form method="post" action="<?= BASE ?>/voorraad/materieel/<?= (int) $e['id'] ?>/status" style="display:flex;gap:.4rem;align-items:center;"><?= \Core\Csrf::field() ?>
                                 <select name="status">
                                     <?php foreach ($statuses as $s): ?>
                                         <option value="<?= $s ?>" <?= $e['status'] === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $s)) ?></option>
@@ -39,7 +39,7 @@ voorraadNav('equipment');
 
     <div class="hz-card">
         <h2 style="margin:0 0 .75rem;font-size:1rem;">Materieel toevoegen</h2>
-        <form method="post" action="<?= BASE ?>/voorraad/materieel">
+        <form method="post" action="<?= BASE ?>/voorraad/materieel"><?= \Core\Csrf::field() ?>
             <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Naam</label></div>
             <div class="hz-field"><input type="text" name="category" placeholder=" "><label>Categorie</label></div>
             <div class="hz-field"><input type="text" name="serial_number" placeholder=" "><label>Serienummer</label></div>

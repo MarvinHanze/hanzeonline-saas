@@ -35,7 +35,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="post" class="space-y-4">
+        <form method="post" class="space-y-4"><?= \Core\Csrf::field() ?>
             <div>
                 <label for="code" class="block text-sm font-medium text-slate-700 mb-1">Verificatiecode</label>
                 <input type="text" name="code" id="code" required autofocus inputmode="numeric" pattern="[0-9]*" maxlength="6"

@@ -34,7 +34,7 @@ beheerNav('subscription');
                         <p style="font-size:.75rem;color:var(--hz-text-muted);margin-top:.4rem;"><?= $currentUsers ?> gebruiker(s) actief</p>
                     <?php endif; ?>
                 <?php else: ?>
-                    <form method="post" action="<?= BASE ?>/beheer/abonnement">
+                    <form method="post" action="<?= BASE ?>/beheer/abonnement"><?= \Core\Csrf::field() ?>
                         <input type="hidden" name="plan" value="<?= htmlspecialchars($slug) ?>">
                         <button type="submit" class="hz-btn hz-btn--primary" data-hz-confirm="Overstappen naar <?= htmlspecialchars($plan['name']) ?>? (demo-simulatie, geen echte betaling)">
                             Kies <?= htmlspecialchars($plan['name']) ?>

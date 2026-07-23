@@ -9,7 +9,7 @@ projectenNav('projects');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Project bewerken</h1>
-    <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>">
+    <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required value="<?= htmlspecialchars($project['name']) ?>"><label>Projectnaam</label></div>
         <div class="hz-field"><input type="text" name="client_name" placeholder=" " value="<?= htmlspecialchars((string) $project['client_name']) ?>"><label>Klant</label></div>
         <div style="margin-bottom:1.1rem;">

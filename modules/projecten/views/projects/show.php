@@ -44,7 +44,7 @@ projectenNav('projects');
                         <td><?= htmlspecialchars((string) $t['assignee_name']) ?: '—' ?></td>
                         <td><?= htmlspecialchars((string) $t['due_date']) ?: '—' ?></td>
                         <td>
-                            <form method="post" action="<?= BASE ?>/projecten/taken/<?= (int) $t['id'] ?>/status">
+                            <form method="post" action="<?= BASE ?>/projecten/taken/<?= (int) $t['id'] ?>/status"><?= \Core\Csrf::field() ?>
                                 <select name="status" onchange="this.form.submit()">
                                     <option value="open" <?= $t['status'] === 'open' ? 'selected' : '' ?>>Open</option>
                                     <option value="bezig" <?= $t['status'] === 'bezig' ? 'selected' : '' ?>>Bezig</option>
@@ -57,7 +57,7 @@ projectenNav('projects');
             </tbody>
         </table>
 
-        <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>/taken" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;">
+        <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>/taken" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;"><?= \Core\Csrf::field() ?>
             <div class="hz-field" style="margin-bottom:0;flex:2;min-width:160px;"><input type="text" name="title" placeholder=" " required><label>Nieuwe taak</label></div>
             <select name="assignee_id" style="height:44px;">
                 <option value="0">Niet toegewezen</option>
@@ -87,7 +87,7 @@ projectenNav('projects');
             </tbody>
         </table>
 
-        <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>/uren">
+        <form method="post" action="<?= BASE ?>/projecten/projecten/<?= (int) $project['id'] ?>/uren"><?= \Core\Csrf::field() ?>
             <div style="display:flex;gap:.5rem;">
                 <input type="date" name="entry_date" value="<?= date('Y-m-d') ?>" style="flex:1;padding:.5rem;border:1px solid var(--hz-border);border-radius:var(--hz-radius);">
                 <input type="number" name="hours" step="0.25" min="0.25" placeholder="Uren" required style="width:90px;padding:.5rem;border:1px solid var(--hz-border);border-radius:var(--hz-radius);">

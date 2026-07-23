@@ -190,6 +190,14 @@ class Database
             FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+        // --- Brute-force-bescherming op /login en /login/2fa ---
+        $pdo->exec("CREATE TABLE IF NOT EXISTS login_attempts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            identifier VARCHAR(255) NOT NULL,
+            attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_identifier_time (identifier, attempted_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
         // --- Open API voor partnerintegraties (api/v1) ---
         $pdo->exec("CREATE TABLE IF NOT EXISTS api_tokens (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -461,8 +469,12 @@ class Database
             'projecten.manage' => 'Projecten en taken beheren',
             'voorraad.view' => 'Voorraad bekijken',
             'voorraad.manage' => 'Voorraad, inkoop en materieel beheren',
+            'hr.view' => 'Medewerkers, verlof en beoordelingen bekijken',
             'hr.manage' => 'HR-gegevens beheren',
+            'facturatie.view' => 'Klanten en facturen bekijken',
             'facturatie.manage' => 'Facturen en klanten beheren',
+            'contract.view' => 'Contracten en sjablonen bekijken',
+            'contract.manage' => 'Contracten aanmaken, ondertekenen en sjablonen beheren',
             'beheer.manage' => 'Modules, branding en abonnement beheren',
             'api.manage' => 'API-tokens beheren',
         ];
@@ -472,14 +484,22 @@ class Database
             $stmt->execute([$key, $description]);
         }
 
+        // Idempotent: bestaande installaties krijgen de description bijgewerkt
+        // als deze ooit wijzigt (voorkomt scheefgroei tussen code en DB).
+        foreach ($permissions as $key => $description) {
+            $pdo->prepare("UPDATE permissions SET description = ? WHERE `key` = ?")->execute([$description, $key]);
+        }
+
         $rolePermissions = [
             'owner' => array_keys($permissions),
             'admin' => [
                 'dashboard.view', 'crm.view', 'crm.manage', 'projecten.view', 'projecten.manage',
-                'voorraad.view', 'voorraad.manage', 'hr.manage', 'facturatie.manage',
+                'voorraad.view', 'voorraad.manage', 'hr.view', 'hr.manage',
+                'facturatie.view', 'facturatie.manage', 'contract.view', 'contract.manage',
             ],
             'user' => [
                 'dashboard.view', 'crm.view', 'projecten.view', 'voorraad.view',
+                'hr.view', 'facturatie.view', 'contract.view',
             ],
         ];
 

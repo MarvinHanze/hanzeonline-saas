@@ -9,7 +9,7 @@ projectenNav('projects');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Nieuw project</h1>
-    <form method="post" action="<?= BASE ?>/projecten/projecten">
+    <form method="post" action="<?= BASE ?>/projecten/projecten"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Projectnaam</label></div>
         <div class="hz-field"><input type="text" name="client_name" placeholder=" "><label>Klant</label></div>
         <div style="margin-bottom:1.1rem;">

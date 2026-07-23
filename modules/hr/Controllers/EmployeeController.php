@@ -5,12 +5,14 @@ namespace Modules\Hr\Controllers;
 
 use Core\Auth;
 use Core\Database;
+use Core\Permission;
 use Core\View;
 
 class EmployeeController
 {
     public function index(): void
     {
+        Permission::require('hr.view');
         $tenantId = (int) Auth::user()['tenant_id'];
         $search = trim($_GET['search'] ?? '');
         $deptId = (int) ($_GET['department'] ?? 0);
@@ -50,6 +52,7 @@ class EmployeeController
 
     public function create(): void
     {
+        Permission::require('hr.manage');
         $departments = Database::fetchAll(
             "SELECT id, name FROM hr_departments WHERE tenant_id = ? ORDER BY name",
             [(int) Auth::user()['tenant_id']]
@@ -59,6 +62,7 @@ class EmployeeController
 
     public function store(): void
     {
+        Permission::require('hr.manage');
         $tenantId = (int) Auth::user()['tenant_id'];
 
         Database::insert('hr_employees', [
@@ -81,6 +85,7 @@ class EmployeeController
 
     public function show(string $id): void
     {
+        Permission::require('hr.view');
         $tenantId = (int) Auth::user()['tenant_id'];
 
         $employee = Database::fetch(
@@ -119,6 +124,7 @@ class EmployeeController
 
     public function edit(string $id): void
     {
+        Permission::require('hr.manage');
         $tenantId = (int) Auth::user()['tenant_id'];
 
         $employee = Database::fetch(
@@ -144,6 +150,7 @@ class EmployeeController
 
     public function update(string $id): void
     {
+        Permission::require('hr.manage');
         $tenantId = (int) Auth::user()['tenant_id'];
 
         Database::update('hr_employees', [

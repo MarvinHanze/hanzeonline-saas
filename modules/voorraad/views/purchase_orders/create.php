@@ -9,7 +9,7 @@ voorraadNav('purchase_orders');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Nieuwe inkooporder</h1>
-    <form method="post" action="<?= BASE ?>/voorraad/inkooporders">
+    <form method="post" action="<?= BASE ?>/voorraad/inkooporders"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="supplier_name" placeholder=" " required><label>Leverancier</label></div>
 
         <div style="margin-bottom:1.1rem;">

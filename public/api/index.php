@@ -13,8 +13,12 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 use Core\ApiToken;
 use Core\Database;
+use Core\ErrorHandler;
 
 header('Content-Type: application/json; charset=utf-8');
+
+$appConfig = require __DIR__ . '/../../config/app.php';
+ErrorHandler::register((bool) ($appConfig['debug'] ?? false));
 
 Database::initSchema();
 

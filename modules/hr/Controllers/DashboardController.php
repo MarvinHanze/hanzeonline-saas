@@ -5,12 +5,14 @@ namespace Modules\Hr\Controllers;
 
 use Core\Auth;
 use Core\Database;
+use Core\Permission;
 use Core\View;
 
 class DashboardController
 {
     public function index(): void
     {
+        Permission::require('hr.view');
         $tenantId = (int) Auth::user()['tenant_id'];
 
         $totalEmployees = Database::count('hr_employees', 'tenant_id = ?', [$tenantId]);

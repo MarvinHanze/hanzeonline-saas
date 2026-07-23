@@ -1,0 +1,9 @@
+# Defense-in-depth: bestanden in deze map (branding-logo's e.d.) worden altijd
+# met een server-gegenereerde naam + vaste extensie (op basis van het
+# gedetecteerde MIME-type, zie BrandingController::update()) opgeslagen, dus
+# een geuploade PHP-payload zou hier nooit als .php terecht moeten komen.
+# Deze regel voorkomt dat scripts in deze map ooit worden uitgevoerd, mocht die
+# aanname ergens toch niet opgaan.
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|pht|phar)$">
+    Require all denied
+</FilesMatch>

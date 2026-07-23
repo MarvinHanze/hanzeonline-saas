@@ -54,6 +54,10 @@ class Router
         foreach ($this->routes as $route) {
             $pattern = $this->toRegex($route['path']);
             if ($route['method'] === $method && preg_match($pattern, $uri, $matches)) {
+                if (in_array($method, ['POST', 'PUT', 'DELETE'], true) && !Csrf::verify($_POST['_csrf'] ?? null)) {
+                    $this->csrfFailed();
+                    return;
+                }
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 $this->call($route['handler'], $params);
                 return;
@@ -71,6 +75,18 @@ class Router
 
         http_response_code(404);
         echo '404 Not Found';
+    }
+
+    /** 403 bij een ontbrekend/ongeldig CSRF-token op een niet-GET request. */
+    private function csrfFailed(): void
+    {
+        http_response_code(403);
+        echo '<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>Ongeldige aanvraag</title></head>'
+            . '<body style="font-family:sans-serif;padding:3rem;text-align:center;color:#334155">'
+            . '<h1>403 — Ongeldige of verlopen aanvraag</h1>'
+            . '<p>Deze actie kon niet worden geverifieerd (CSRF-token ontbreekt of is verlopen). '
+            . 'Ga terug, ververs de pagina en probeer het opnieuw.</p>'
+            . '<p><a href="javascript:history.back()">Terug</a></p></body></html>';
     }
 
     private function call(callable|array $handler, array $params): void

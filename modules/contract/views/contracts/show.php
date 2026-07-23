@@ -100,7 +100,7 @@ $st = $statusLabels[$contract['status']] ?? ['Onbekend', 'bg-slate-100 text-slat
                 <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
                     <h2 class="text-lg font-semibold text-slate-900 mb-4">Handtekening</h2>
                     <?php if ($signaturePath && file_exists($signaturePath)): ?>
-                        <img src="<?= BASE ?>/<?= ltrim($signaturePath, __DIR__ . '/../../../') ?>" alt="Handtekening" class="max-w-xs border border-slate-200 rounded-lg">
+                        <img src="<?= BASE ?>/contract/contracts/<?= (int) $contract['id'] ?>/handtekening" alt="Handtekening" class="max-w-xs border border-slate-200 rounded-lg">
                     <?php else: ?>
                         <p class="text-sm text-green-600 font-medium">Handtekening ontvangen op <?= date('d-m-Y H:i', strtotime($contract['signed_at'])) ?></p>
                     <?php endif; ?>
@@ -110,7 +110,7 @@ $st = $statusLabels[$contract['status']] ?? ['Onbekend', 'bg-slate-100 text-slat
                 <!-- Signature canvas -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
                     <h2 class="text-lg font-semibold text-slate-900 mb-4">Handtekening plaatsen</h2>
-                    <form method="POST" action="<?= BASE ?>/contract/contracts/<?= $contract['id'] ?>/ondertekenen">
+                    <form method="POST" action="<?= BASE ?>/contract/contracts/<?= $contract['id'] ?>/ondertekenen"><?= \Core\Csrf::field() ?>
                         <canvas id="signatureCanvas" width="500" height="200" class="border border-slate-300 rounded-lg bg-white cursor-crosshair w-full max-w-lg"></canvas>
                         <input type="hidden" name="signature_data" id="signatureData">
                         <div class="flex items-center gap-3 mt-4">
@@ -138,7 +138,7 @@ $st = $statusLabels[$contract['status']] ?? ['Onbekend', 'bg-slate-100 text-slat
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                         Status wijzigen
                     </button>
-                    <form id="statusForm" method="POST" action="<?= BASE ?>/contract/contracts/<?= $contract['id'] ?>/status" class="hidden absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg p-3 z-10">
+                    <form id="statusForm" method="POST" action="<?= BASE ?>/contract/contracts/<?= $contract['id'] ?>/status" class="hidden absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg p-3 z-10"><?= \Core\Csrf::field() ?>
                         <select name="status" class="border border-slate-300 rounded-lg px-3 py-2 text-sm mb-2 w-full">
                             <option value="concept" <?= $contract['status'] === 'concept' ? 'selected' : '' ?>>Concept</option>
                             <option value="actief" <?= $contract['status'] === 'actief' ? 'selected' : '' ?>>Actief</option>

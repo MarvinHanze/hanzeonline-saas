@@ -31,7 +31,7 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
 
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-40 transform -translate-x-full lg:translate-x-0 transition-transform">
         <div class="flex items-center gap-2 px-6 h-16 border-b border-slate-200">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:<?= $brandColor ?>">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:<?= htmlspecialchars($brandColor) ?>">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             </div>
             <span class="font-bold text-slate-900">HR Dashboard</span>
@@ -99,10 +99,10 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
                                         <td class="px-5 py-3 text-right">
                                             <?php if ($req['status'] === 'ingediend'): ?>
                                                 <div class="flex gap-2 justify-end">
-                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/goedkeuren">
+                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/goedkeuren"><?= \Core\Csrf::field() ?>
                                                         <button type="submit" class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-lg hover:bg-emerald-200">Goedkeuren</button>
                                                     </form>
-                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/afwijzen" class="flex gap-1">
+                                                    <form method="POST" action="<?= BASE ?>/hr/verlof/<?= $req['id'] ?>/afwijzen" class="flex gap-1"><?= \Core\Csrf::field() ?>
                                                         <input type="text" name="reason" placeholder="Reden..." class="px-2 py-1 border border-slate-300 rounded text-xs w-32">
                                                         <button type="submit" class="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200">Afwijzen</button>
                                                     </form>
@@ -129,7 +129,7 @@ $leaveStatusColors = ['ingediend' => 'bg-yellow-100 text-yellow-800', 'goedgekeu
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        <form method="POST" action="<?= BASE ?>/hr/verlof" class="space-y-4">
+        <form method="POST" action="<?= BASE ?>/hr/verlof" class="space-y-4"><?= \Core\Csrf::field() ?>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Medewerker *</label>
                 <select name="employee_id" required class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">

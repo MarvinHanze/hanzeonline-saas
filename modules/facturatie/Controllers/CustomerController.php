@@ -5,12 +5,14 @@ namespace Modules\Facturatie\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 
 class CustomerController
 {
     public function index(): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
         $search = $_GET['search'] ?? '';
 
@@ -34,11 +36,13 @@ class CustomerController
 
     public function create(): void
     {
+        Permission::require('facturatie.manage');
         View::render('modules/facturatie/views/customers/create');
     }
 
     public function store(): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         Database::insert('fa_customers', [
@@ -61,6 +65,7 @@ class CustomerController
 
     public function show(string $id): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $customer = Database::fetch(
@@ -87,6 +92,7 @@ class CustomerController
 
     public function edit(string $id): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $customer = Database::fetch(
@@ -107,6 +113,7 @@ class CustomerController
 
     public function update(string $id): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         Database::update('fa_customers', [
@@ -128,6 +135,7 @@ class CustomerController
 
     public function delete(string $id): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
         Database::delete('fa_customers', 'id = ? AND tenant_id = ?', [$id, $tenantId]);
         header('Location: ' . BASE . '/facturatie/klanten');

@@ -9,7 +9,7 @@ crmNav('orders');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Nieuwe verkooporder</h1>
-    <form method="post" action="<?= BASE ?>/crm/orders">
+    <form method="post" action="<?= BASE ?>/crm/orders"><?= \Core\Csrf::field() ?>
         <div style="margin-bottom:1.1rem;">
             <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.35rem;">Gebaseerd op offerte (optioneel)</label>
             <select name="quote_id" onchange="var o=this.options[this.selectedIndex];document.getElementById('amount').value=o.dataset.amount||'';">

@@ -10,6 +10,7 @@ $router->group('/contract', function(Router $r) {
     $r->get('/contracts/nieuw', [\Modules\Contract\Controllers\ContractController::class, 'create']);
     $r->post('/contracts', [\Modules\Contract\Controllers\ContractController::class, 'store']);
     $r->get('/contracts/{id}', [\Modules\Contract\Controllers\ContractController::class, 'show']);
+    $r->get('/contracts/{id}/handtekening', [\Modules\Contract\Controllers\ContractController::class, 'signatureImage']);
     $r->get('/contracts/{id}/pdf', [\Modules\Contract\Controllers\ContractController::class, 'pdf']);
     $r->post('/contracts/{id}/ondertekenen', [\Modules\Contract\Controllers\ContractController::class, 'sign']);
     $r->post('/contracts/{id}/status', [\Modules\Contract\Controllers\ContractController::class, 'updateStatus']);

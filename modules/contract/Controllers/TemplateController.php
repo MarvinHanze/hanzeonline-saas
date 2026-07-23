@@ -5,12 +5,14 @@ namespace Modules\Contract\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 
 class TemplateController
 {
     public function index(): void
     {
+        Permission::require('contract.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $templates = Database::fetchAll(
@@ -26,11 +28,13 @@ class TemplateController
 
     public function create(): void
     {
+        Permission::require('contract.manage');
         View::render('modules/contract/views/templates/create');
     }
 
     public function store(): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         Database::insert('ct_templates', [
@@ -46,6 +50,7 @@ class TemplateController
 
     public function edit(string $id): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $template = Database::fetch(
@@ -66,6 +71,7 @@ class TemplateController
 
     public function update(string $id): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         Database::update('ct_templates', [

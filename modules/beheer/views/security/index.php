@@ -20,7 +20,7 @@ beheerNav('security');
         <p style="color:var(--hz-text-muted);font-size:.88rem;">
             Je account is beveiligd met een authenticator-app. Schakel 2FA alleen uit als je toegang tot je authenticator kwijt bent.
         </p>
-        <form method="post" action="<?= BASE ?>/beheer/beveiliging/uitschakelen">
+        <form method="post" action="<?= BASE ?>/beheer/beveiliging/uitschakelen"><?= \Core\Csrf::field() ?>
             <button type="submit" class="hz-btn hz-btn--danger" data-hz-confirm="2FA uitschakelen? Je account is dan minder goed beveiligd.">Uitschakelen</button>
         </form>
     <?php else: ?>
@@ -34,7 +34,7 @@ beheerNav('security');
         <p style="font-size:.78rem;color:var(--hz-text-muted);word-break:break-all;margin-bottom:1.25rem;">
             <?= htmlspecialchars($provisioningUri) ?>
         </p>
-        <form method="post" action="<?= BASE ?>/beheer/beveiliging/inschakelen" style="display:flex;gap:.5rem;align-items:flex-end;">
+        <form method="post" action="<?= BASE ?>/beheer/beveiliging/inschakelen" style="display:flex;gap:.5rem;align-items:flex-end;"><?= \Core\Csrf::field() ?>
             <div class="hz-field" style="margin-bottom:0;flex:1;">
                 <input type="text" name="code" placeholder=" " required inputmode="numeric" maxlength="6" pattern="[0-9]*">
                 <label>Verificatiecode</label>

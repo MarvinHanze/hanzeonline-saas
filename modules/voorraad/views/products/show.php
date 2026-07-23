@@ -46,7 +46,7 @@ $totalQty = array_sum(array_column($stockPerWarehouse, 'quantity'));
                     <td><?= htmlspecialchars($sw['warehouse_name']) ?></td>
                     <td><?= (int) $sw['quantity'] ?></td>
                     <td>
-                        <form method="post" action="<?= BASE ?>/voorraad/producten/<?= (int) $product['id'] ?>/voorraad" style="display:flex;gap:.4rem;">
+                        <form method="post" action="<?= BASE ?>/voorraad/producten/<?= (int) $product['id'] ?>/voorraad" style="display:flex;gap:.4rem;"><?= \Core\Csrf::field() ?>
                             <input type="hidden" name="warehouse_id" value="<?= (int) $sw['warehouse_id'] ?>">
                             <input type="number" name="delta" placeholder="+10 / -5" required style="width:90px;padding:.4rem;border:1px solid var(--hz-border);border-radius:var(--hz-radius);">
                             <button type="submit" class="hz-btn hz-btn--secondary">Boeken</button>

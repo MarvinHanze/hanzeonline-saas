@@ -41,7 +41,7 @@ beheerNav('api_tokens');
                     </td>
                     <td>
                         <?php if (!$t['revoked_at']): ?>
-                            <form method="post" action="<?= BASE ?>/beheer/api-tokens/<?= (int) $t['id'] ?>/intrekken">
+                            <form method="post" action="<?= BASE ?>/beheer/api-tokens/<?= (int) $t['id'] ?>/intrekken"><?= \Core\Csrf::field() ?>
                                 <button type="submit" class="hz-btn hz-btn--ghost" data-hz-confirm="Token '<?= htmlspecialchars($t['name']) ?>' intrekken? API-toegang met dit token stopt direct.">Intrekken</button>
                             </form>
                         <?php endif; ?>
@@ -54,7 +54,7 @@ beheerNav('api_tokens');
 
 <div class="hz-card" style="max-width:420px;">
     <h2 style="font-size:1rem;margin:0 0 .75rem;">Nieuw token aanmaken</h2>
-    <form method="post" action="<?= BASE ?>/beheer/api-tokens">
+    <form method="post" action="<?= BASE ?>/beheer/api-tokens"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Naam (bv. "Boekhoudkoppeling")</label></div>
         <button type="submit" class="hz-btn hz-btn--primary">Token genereren</button>
     </form>

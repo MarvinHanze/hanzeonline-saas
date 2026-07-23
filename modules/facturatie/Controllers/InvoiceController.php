@@ -5,12 +5,14 @@ namespace Modules\Facturatie\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 
 class InvoiceController
 {
     public function index(): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
         $status = $_GET['status'] ?? '';
         $search = $_GET['search'] ?? '';
@@ -43,6 +45,7 @@ class InvoiceController
 
     public function create(): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $customers = Database::fetchAll(
@@ -57,6 +60,7 @@ class InvoiceController
 
     public function store(): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
         $customerId = (int) ($_POST['customer_id'] ?? 0);
         $notes = trim($_POST['notes'] ?? '');
@@ -133,6 +137,7 @@ class InvoiceController
 
     public function show(string $id): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $invoice = Database::fetch(
@@ -159,6 +164,7 @@ class InvoiceController
 
     public function updateStatus(string $id): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
         $status = $_POST['status'] ?? '';
 
@@ -179,6 +185,7 @@ class InvoiceController
 
     public function pdf(string $id): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $invoice = Database::fetch(
@@ -211,6 +218,7 @@ class InvoiceController
 
     public function sendReminder(string $id): void
     {
+        Permission::require('facturatie.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $invoice = Database::fetch(

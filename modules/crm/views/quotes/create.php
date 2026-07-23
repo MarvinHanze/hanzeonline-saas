@@ -9,7 +9,7 @@ crmNav('offertes');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Nieuwe offerte</h1>
-    <form method="post" action="<?= BASE ?>/crm/offertes">
+    <form method="post" action="<?= BASE ?>/crm/offertes"><?= \Core\Csrf::field() ?>
         <div style="margin-bottom:1.1rem;">
             <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.35rem;">Lead (optioneel)</label>
             <select name="lead_id">

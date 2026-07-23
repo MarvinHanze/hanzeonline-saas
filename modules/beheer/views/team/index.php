@@ -30,7 +30,7 @@ beheerNav('team');
                     <td><?= htmlspecialchars($m['name']) ?></td>
                     <td><?= htmlspecialchars($m['email']) ?></td>
                     <td>
-                        <form method="post" action="<?= BASE ?>/beheer/team/<?= (int) $m['id'] ?>/rol" style="display:flex;gap:.4rem;align-items:center;">
+                        <form method="post" action="<?= BASE ?>/beheer/team/<?= (int) $m['id'] ?>/rol" style="display:flex;gap:.4rem;align-items:center;"><?= \Core\Csrf::field() ?>
                             <select name="role" onchange="this.form.submit()" <?= (int) $m['id'] === $currentUserId ? 'disabled' : '' ?>>
                                 <?php foreach (['owner', 'admin', 'user'] as $r): ?>
                                     <option value="<?= $r ?>" <?= $m['role'] === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
@@ -41,7 +41,7 @@ beheerNav('team');
                     <td><?= $m['last_login'] ? htmlspecialchars($m['last_login']) : '—' ?></td>
                     <td>
                         <?php if ((int) $m['id'] !== $currentUserId): ?>
-                            <form method="post" action="<?= BASE ?>/beheer/team/<?= (int) $m['id'] ?>/verwijderen">
+                            <form method="post" action="<?= BASE ?>/beheer/team/<?= (int) $m['id'] ?>/verwijderen"><?= \Core\Csrf::field() ?>
                                 <button type="submit" class="hz-btn hz-btn--ghost" data-hz-confirm="<?= htmlspecialchars($m['name']) ?> verwijderen uit dit team?">Verwijderen</button>
                             </form>
                         <?php endif; ?>
@@ -54,7 +54,7 @@ beheerNav('team');
 
 <div class="hz-card" style="max-width:420px;">
     <h2 style="font-size:1rem;margin:0 0 .75rem;">Teamlid uitnodigen</h2>
-    <form method="post" action="<?= BASE ?>/beheer/team">
+    <form method="post" action="<?= BASE ?>/beheer/team"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Naam</label></div>
         <div class="hz-field"><input type="email" name="email" placeholder=" " required><label>E-mailadres</label></div>
         <div class="hz-field"><input type="password" name="password" placeholder=" " required minlength="8"><label>Tijdelijk wachtwoord</label></div>

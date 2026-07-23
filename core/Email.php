@@ -83,14 +83,23 @@ class Email
 
     private static function renderReminderTemplate(array $invoice, array $customer, array $company, int $days): string
     {
+        // Defense-in-depth: klant-/bedrijfsnaam komen uit de database (door een
+        // ingelogde facturatie.manage-gebruiker ingevoerd) en worden hier in een
+        // HTML-e-mail geplaatst — escapen voorkomt dat een HTML/script-payload in
+        // een klantnaam de e-mail-layout breekt of (bij een e-mailclient die HTML
+        // uitvoert) iets onverwachts doet.
+        $invoiceNumber = htmlspecialchars((string) $invoice['number']);
+        $customerName = htmlspecialchars((string) $customer['name']);
+        $companyName = htmlspecialchars((string) $company['name']);
+
         return "
         <html><body style='font-family:sans-serif;color:#333'>
-        <h2>Herinnering: Factuur #{$invoice['number']}</h2>
-        <p>Beste {$customer['name']},</p>
-        <p>Wij hebben uw betaling voor factuur <strong>#{$invoice['number']}</strong> van <strong>€" . number_format((float)$invoice['total'], 2, ',', '.') . "</strong> nog niet ontvangen.</p>
+        <h2>Herinnering: Factuur #{$invoiceNumber}</h2>
+        <p>Beste {$customerName},</p>
+        <p>Wij hebben uw betaling voor factuur <strong>#{$invoiceNumber}</strong> van <strong>€" . number_format((float)$invoice['total'], 2, ',', '.') . "</strong> nog niet ontvangen.</p>
         <p>Deze factuur is nu <strong>{$days} dagen</strong> over de vervaldatum heen.</p>
         <p>Betaal alstublieft zo snel mogelijk.</p>
-        <p>Met vriendelijke groet,<br>{$company['name']}</p>
+        <p>Met vriendelijke groet,<br>{$companyName}</p>
         </body></html>";
     }
 }

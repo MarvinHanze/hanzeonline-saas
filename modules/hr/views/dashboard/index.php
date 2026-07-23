@@ -32,7 +32,7 @@ $brandColor = '#059669';
     <!-- Sidebar -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-40 transform -translate-x-full lg:translate-x-0 transition-transform">
         <div class="flex items-center gap-2 px-6 h-16 border-b border-slate-200">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:<?= $brandColor ?>">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:<?= htmlspecialchars($brandColor) ?>">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             </div>
             <span class="font-bold text-slate-900">HR Dashboard</span>

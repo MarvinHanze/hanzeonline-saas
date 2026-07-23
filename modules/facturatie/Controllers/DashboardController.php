@@ -5,12 +5,14 @@ namespace Modules\Facturatie\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 
 class DashboardController
 {
     public function index(): void
     {
+        Permission::require('facturatie.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $totalCustomers = Database::count('fa_customers', 'tenant_id = ?', [$tenantId]);

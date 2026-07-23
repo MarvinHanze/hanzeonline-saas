@@ -31,7 +31,13 @@ class BrandingController
         $data = ['brand_color' => $color];
 
         if (!empty($_FILES['logo']['name']) && ($_FILES['logo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
-            $allowed = ['image/png' => 'png', 'image/jpeg' => 'jpg', 'image/svg+xml' => 'svg', 'image/webp' => 'webp'];
+            // Let op: bewust GEEN image/svg+xml — een SVG-logo is direct benaderbaar
+            // via een URL binnen public/uploads/branding/ (geen auth/tenant-check op
+            // die directe bestands-URL) en SVG kan <script>/event-handlers bevatten,
+            // wat bij directe navigatie (niet via <img>) alsnog in de browser kan
+            // uitvoeren — een opgeslagen-XSS-vector. Rasterformaten zijn voldoende
+            // voor een logo.
+            $allowed = ['image/png' => 'png', 'image/jpeg' => 'jpg', 'image/webp' => 'webp'];
             $mime = (string) mime_content_type($_FILES['logo']['tmp_name']);
             if (isset($allowed[$mime]) && $_FILES['logo']['size'] <= 2 * 1024 * 1024) {
                 $filename = 'tenant_' . $tenantId . '_' . time() . '.' . $allowed[$mime];

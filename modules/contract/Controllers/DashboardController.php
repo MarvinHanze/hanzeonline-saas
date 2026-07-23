@@ -5,12 +5,14 @@ namespace Modules\Contract\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 
 class DashboardController
 {
     public function index(): void
     {
+        Permission::require('contract.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $totalActive = Database::count('ct_contracts', 'tenant_id = ? AND status = "actief"', [$tenantId]);

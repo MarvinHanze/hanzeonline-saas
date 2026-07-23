@@ -25,7 +25,7 @@ crmNav('orders');
                     <td>€ <?= number_format((float) $o['amount'], 2, ',', '.') ?></td>
                     <td><?= htmlspecialchars((string) $o['order_date']) ?></td>
                     <td>
-                        <form method="post" action="<?= BASE ?>/crm/orders/<?= (int) $o['id'] ?>/status" style="display:inline;">
+                        <form method="post" action="<?= BASE ?>/crm/orders/<?= (int) $o['id'] ?>/status" style="display:inline;"><?= \Core\Csrf::field() ?>
                             <select name="status" onchange="this.form.submit()">
                                 <?php foreach ($statuses as $s): ?>
                                     <option value="<?= $s ?>" <?= $o['status'] === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $s)) ?></option>

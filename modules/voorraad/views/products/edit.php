@@ -9,7 +9,7 @@ voorraadNav('products');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Product bewerken</h1>
-    <form method="post" action="<?= BASE ?>/voorraad/producten/<?= (int) $product['id'] ?>">
+    <form method="post" action="<?= BASE ?>/voorraad/producten/<?= (int) $product['id'] ?>"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="sku" placeholder=" " required value="<?= htmlspecialchars($product['sku']) ?>"><label>SKU / artikelcode</label></div>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required value="<?= htmlspecialchars($product['name']) ?>"><label>Naam</label></div>
         <div class="hz-field"><input type="text" name="unit" placeholder=" " value="<?= htmlspecialchars($product['unit']) ?>"><label>Eenheid</label></div>

@@ -25,7 +25,7 @@ crmNav('offertes');
                     <td>€ <?= number_format((float) $q['amount'], 2, ',', '.') ?></td>
                     <td><?= $q['valid_until'] ? htmlspecialchars($q['valid_until']) : '—' ?></td>
                     <td>
-                        <form method="post" action="<?= BASE ?>/crm/offertes/<?= (int) $q['id'] ?>/status" style="display:inline;">
+                        <form method="post" action="<?= BASE ?>/crm/offertes/<?= (int) $q['id'] ?>/status" style="display:inline;"><?= \Core\Csrf::field() ?>
                             <select name="status" onchange="this.form.submit()">
                                 <?php foreach ($statuses as $s): ?>
                                     <option value="<?= $s ?>" <?= $q['status'] === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

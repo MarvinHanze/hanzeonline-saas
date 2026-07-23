@@ -5,6 +5,7 @@ namespace Modules\Contract\Controllers;
 
 use Core\Database;
 use Core\Auth;
+use Core\Permission;
 use Core\View;
 use Core\Signature;
 
@@ -12,6 +13,7 @@ class ContractController
 {
     public function index(): void
     {
+        Permission::require('contract.view');
         $tenantId = Auth::user()['tenant_id'];
         $status = $_GET['status'] ?? '';
 
@@ -41,6 +43,7 @@ class ContractController
 
     public function create(): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $templates = Database::fetchAll(
@@ -67,6 +70,7 @@ class ContractController
 
     public function store(): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $templateId = (int) ($_POST['template_id'] ?? 0);
@@ -82,7 +86,12 @@ class ContractController
         $employeeId = (int) ($_POST['employee_id'] ?? 0) ?: null;
         $notes = trim($_POST['notes'] ?? '');
 
-        // Replace template variables if a template was selected
+        // Replace template variables if a template was selected. Als er GEEN
+        // sjabloon is gekozen valt dit terug op de vrije "notities"-tekst van de
+        // gebruiker — die wordt hierna ongefilterd als HTML gerenderd (show.php/
+        // pdf()), dus moet hier worden ge-escaped (stored-XSS-preventie). Alleen
+        // sjabloon-content_html (door contract.manage-rollen beheerd) is bewust
+        // wel rijke HTML.
         $content = $template ? $this->replaceVariables($template['content_html'], [
             'klant_naam' => $customerId ? $this->getName('fa_customers', $customerId, $tenantId) : '',
             'medewerker_naam' => $employeeId ? $this->getName('hr_employees', $employeeId, $tenantId) : '',
@@ -90,7 +99,7 @@ class ContractController
             'start_datum' => $startDate ?: '',
             'eind_datum' => $endDate ?: '',
             'bedrijf_naam' => \Core\Tenant::name(),
-        ]) : $notes;
+        ]) : nl2br(htmlspecialchars($notes));
 
         $contractId = Database::insert('ct_contracts', [
             'tenant_id' => $tenantId,
@@ -110,6 +119,7 @@ class ContractController
 
     public function show(string $id): void
     {
+        Permission::require('contract.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $contract = Database::fetch(
@@ -157,8 +167,49 @@ class ContractController
         ]);
     }
 
+    /**
+     * Serveert de handtekening-afbeelding onder authenticatie + tenant-check
+     * (het bestand zelf staat buiten de public/-webroot in storage/signatures,
+     * dus dit is de enige manier om ‘m te bekijken — geen directe URL-toegang).
+     */
+    public function signatureImage(string $id): void
+    {
+        Permission::require('contract.view');
+        $tenantId = Auth::user()['tenant_id'];
+
+        $contract = Database::fetch(
+            "SELECT id FROM ct_contracts WHERE id = ? AND tenant_id = ?",
+            [$id, $tenantId]
+        );
+        if (!$contract) {
+            http_response_code(404);
+            echo 'Contract niet gevonden';
+            return;
+        }
+
+        $path = Signature::getSignaturePath((int) $id);
+        $realStorageDir = realpath(__DIR__ . '/../../../storage/signatures');
+        $realPath = $path ? realpath($path) : false;
+
+        // Defensief: bevestig dat het pad daadwerkelijk binnen de
+        // signatures-directory valt (voorkomt path traversal, ook al komt
+        // $path hier alleen uit onze eigen DB-tabel, niet uit user input).
+        if (!$realPath || !$realStorageDir || !str_starts_with($realPath, $realStorageDir . DIRECTORY_SEPARATOR)) {
+            http_response_code(404);
+            echo 'Handtekening niet gevonden';
+            return;
+        }
+
+        header('Content-Type: image/png');
+        header('Cache-Control: private, max-age=0, no-cache');
+        header('Content-Length: ' . filesize($realPath));
+        readfile($realPath);
+        exit;
+    }
+
     public function pdf(string $id): void
     {
+        Permission::require('contract.view');
         $tenantId = Auth::user()['tenant_id'];
 
         $contract = Database::fetch(
@@ -233,13 +284,15 @@ class ContractController
         $dompdf->render();
         $dompdf->stream('contract_' . $contract['title'] . '.pdf', ['Attachment' => true]);
 
-        // Update pdf_path
-        Database::update('ct_contracts', ['pdf_path' => $pdfFile], 'id = ?', [$id]);
+        // Update pdf_path (tenant_id erbij: defense-in-depth, ook al is $id
+        // hierboven al tenant-gescoped opgehaald)
+        Database::update('ct_contracts', ['pdf_path' => $pdfFile], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
         exit;
     }
 
     public function sign(string $id): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
 
         $contract = Database::fetch(
@@ -270,7 +323,7 @@ class ContractController
             'signed_at' => date('Y-m-d H:i:s'),
             'signed_by' => $user['name'],
             'status' => 'actief',
-        ], 'id = ?', [$id]);
+        ], 'id = ? AND tenant_id = ?', [$id, $tenantId]);
 
         header('Location: ' . BASE . '/contract/contracts/' . $id);
         exit;
@@ -278,6 +331,7 @@ class ContractController
 
     public function updateStatus(string $id): void
     {
+        Permission::require('contract.manage');
         $tenantId = Auth::user()['tenant_id'];
         $status = $_POST['status'] ?? '';
 

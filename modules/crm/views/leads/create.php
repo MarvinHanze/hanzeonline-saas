@@ -9,7 +9,7 @@ crmNav('leads');
 ?>
 <div class="hz-card" style="max-width:560px;">
     <h1 style="font-size:1.1rem;margin:0 0 1rem;">Nieuwe lead</h1>
-    <form method="post" action="<?= BASE ?>/crm/leads">
+    <form method="post" action="<?= BASE ?>/crm/leads"><?= \Core\Csrf::field() ?>
         <div class="hz-field"><input type="text" name="name" placeholder=" " required><label>Naam</label></div>
         <div class="hz-field"><input type="text" name="company" placeholder=" "><label>Bedrijf</label></div>
         <div class="hz-field"><input type="email" name="email" placeholder=" "><label>E-mailadres</label></div>
